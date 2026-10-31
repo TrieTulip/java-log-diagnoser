@@ -1,0 +1,23 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 结构自检（frontmatter / 文件 / 锚点 / 行号）
+        run: python scripts/validate_skill.py
+
+      - name: 脚本冒烟（示例必须解析出 4 层主链）
+        run: |
+          python scripts/parse_java_log.py --file examples/logs/npe-in-commit-chain.log --app-package com.acme --compact > /tmp/parsed.json
+          python -c "import json;d=json.load(open('/tmp/parsed.json',encoding='utf-8'));s=d['summary'];assert s['root_cause_type']=='java.lang.NullPointerException',s;assert s['chain_length']==4,s;assert d['root_business_frame']['line']==52,d['root_business_frame'];print('smoke ok')"

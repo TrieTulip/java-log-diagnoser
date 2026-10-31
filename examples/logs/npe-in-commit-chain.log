@@ -1,0 +1,33 @@
+2026-10-31 20:58:31.902  INFO 1 --- [main] c.acme.order.OrderApplication : Starting OrderApplication v2.7.1 on order-svc-7d9f with PID 1
+2026-10-31 20:58:34.117  INFO 1 --- [main] c.acme.order.OrderApplication : Started OrderApplication in 2.215 seconds (JVM running for 2.61)
+2026-10-31 21:04:02.113 ERROR 1 --- [http-nio-8080-exec-5] c.a.o.c.OrderController : 查询订单详情失败 orderId=SO20261031001
+org.springframework.web.util.NestedServletException: Request processing failed; nested exception is org.springframework.transaction.TransactionSystemException: Could not commit JPA transaction
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:898)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:655)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)
+	at com.acme.order.controller.OrderController.detail(OrderController.java:64)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+Caused by: org.springframework.transaction.TransactionSystemException: Could not commit JPA transaction
+	at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:569)
+	at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:761)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:654)
+	at com.acme.order.service.OrderQueryService.query(OrderQueryService.java:118)
+	at com.acme.order.controller.OrderController.detail(OrderController.java:64)
+Caused by: javax.persistence.RollbackException: Error while committing the transaction
+	at org.hibernate.internal.ExceptionConverterImpl.convertCommitException(ExceptionConverterImpl.java:90)
+	at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:104)
+	at com.acme.order.listener.OrderAuditListener.beforeCommit(OrderAuditListener.java:38)
+Caused by: java.lang.NullPointerException: Cannot invoke "com.acme.order.domain.OrderItem.getSkuId()" because the element at index 1 of "java.util.List" is null
+	at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52)
+	at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:41)
+	at com.acme.order.service.OrderQueryService.query(OrderQueryService.java:110)
+	... 27 more
+2026-10-31 21:04:02.118  INFO 1 --- [http-nio-8080-exec-5] c.a.o.g.GlobalExceptionHandler : 已转换为 HTTP 500, traceId=7f2c9a01
+2026-10-31 21:04:19.640 ERROR 1 --- [http-nio-8080-exec-6] c.a.o.c.OrderController : 查询订单详情失败 orderId=SO20261031007
+java.lang.NullPointerException: Cannot invoke "com.acme.order.domain.OrderItem.getSkuId()" because the element at index 2 of "java.util.List" is null
+	at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52)
+	at com.acme.order.service.OrderQueryService.query(OrderQueryService.java:110)
+	at com.acme.order.controller.OrderController.detail(OrderController.java:64)
+2026-10-31 21:05:00.004  INFO 1 --- [scheduling-1] c.a.o.j.OrderSyncJob : 订单同步任务完成, 处理 128 条
+2026-10-31 21:06:11.229  INFO 1 --- [http-nio-8080-exec-8] c.a.o.c.OrderController : 查询订单详情成功 orderId=SO20261031012

@@ -1,0 +1,478 @@
+{
+  "schema_version": "1.0",
+  "parser": {
+    "name": "parse_java_log.py",
+    "generated_at": "2026-10-31T21:53:15+08:00",
+    "lines_total": 33,
+    "lines_scanned": 33,
+    "scan_offset": 0,
+    "truncated": false,
+    "app_packages": [
+      "com.acme"
+    ]
+  },
+  "summary": {
+    "exception_count": 5,
+    "chain_count": 2,
+    "primary_chain_index": 0,
+    "chain_length": 4,
+    "has_caused_by": true,
+    "root_cause_type": "java.lang.NullPointerException",
+    "root_cause_message": "Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 1 of \"java.util.List\" is null",
+    "root_cause_log_line": 21,
+    "has_business_frame": true,
+    "oom_kind": null
+  },
+  "out_of_memory": {
+    "present": false,
+    "type": null,
+    "kind": null,
+    "log_line": null,
+    "evidence": null
+  },
+  "chains": [
+    {
+      "index": 0,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "org.springframework.web.util.NestedServletException",
+          "message": "Request processing failed; nested exception is org.springframework.transaction.TransactionSystemException: Could not commit JPA transaction",
+          "log_line": 4,
+          "raw": "org.springframework.web.util.NestedServletException: Request processing failed; nested exception is org.springframework.transaction.TransactionSystemException: Could not commit JPA transaction",
+          "frames": [
+            {
+              "raw": "at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)",
+              "class": "org.springframework.web.servlet.FrameworkServlet",
+              "method": "processRequest",
+              "file": "FrameworkServlet.java",
+              "line": 1014,
+              "log_line": 5,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:898)",
+              "class": "org.springframework.web.servlet.FrameworkServlet",
+              "method": "doGet",
+              "file": "FrameworkServlet.java",
+              "line": 898,
+              "log_line": 6,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at javax.servlet.http.HttpServlet.service(HttpServlet.java:655)",
+              "class": "javax.servlet.http.HttpServlet",
+              "method": "service",
+              "file": "HttpServlet.java",
+              "line": 655,
+              "log_line": 7,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:883)",
+              "class": "org.springframework.web.servlet.FrameworkServlet",
+              "method": "service",
+              "file": "FrameworkServlet.java",
+              "line": 883,
+              "log_line": 8,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:64)",
+              "class": "com.acme.order.controller.OrderController",
+              "method": "detail",
+              "file": "OrderController.java",
+              "line": 64,
+              "log_line": 9,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at java.base/java.lang.Thread.run(Thread.java:833)",
+              "class": "java.lang.Thread",
+              "method": "run",
+              "file": "Thread.java",
+              "line": 833,
+              "log_line": 10,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 1,
+          "type": "org.springframework.transaction.TransactionSystemException",
+          "message": "Could not commit JPA transaction",
+          "log_line": 11,
+          "raw": "Caused by: org.springframework.transaction.TransactionSystemException: Could not commit JPA transaction",
+          "frames": [
+            {
+              "raw": "at org.springframework.orm.jpa.JpaTransactionManager.doCommit(JpaTransactionManager.java:569)",
+              "class": "org.springframework.orm.jpa.JpaTransactionManager",
+              "method": "doCommit",
+              "file": "JpaTransactionManager.java",
+              "line": 569,
+              "log_line": 12,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at org.springframework.transaction.support.AbstractPlatformTransactionManager.processCommit(AbstractPlatformTransactionManager.java:761)",
+              "class": "org.springframework.transaction.support.AbstractPlatformTransactionManager",
+              "method": "processCommit",
+              "file": "AbstractPlatformTransactionManager.java",
+              "line": 761,
+              "log_line": 13,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at org.springframework.transaction.interceptor.TransactionAspectSupport.commitTransactionAfterReturning(TransactionAspectSupport.java:654)",
+              "class": "org.springframework.transaction.interceptor.TransactionAspectSupport",
+              "method": "commitTransactionAfterReturning",
+              "file": "TransactionAspectSupport.java",
+              "line": 654,
+              "log_line": 14,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at com.acme.order.service.OrderQueryService.query(OrderQueryService.java:118)",
+              "class": "com.acme.order.service.OrderQueryService",
+              "method": "query",
+              "file": "OrderQueryService.java",
+              "line": 118,
+              "log_line": 15,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:64)",
+              "class": "com.acme.order.controller.OrderController",
+              "method": "detail",
+              "file": "OrderController.java",
+              "line": 64,
+              "log_line": 16,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 1
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 2,
+          "type": "javax.persistence.RollbackException",
+          "message": "Error while committing the transaction",
+          "log_line": 17,
+          "raw": "Caused by: javax.persistence.RollbackException: Error while committing the transaction",
+          "frames": [
+            {
+              "raw": "at org.hibernate.internal.ExceptionConverterImpl.convertCommitException(ExceptionConverterImpl.java:90)",
+              "class": "org.hibernate.internal.ExceptionConverterImpl",
+              "method": "convertCommitException",
+              "file": "ExceptionConverterImpl.java",
+              "line": 90,
+              "log_line": 18,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 2
+            },
+            {
+              "raw": "at org.hibernate.engine.transaction.internal.TransactionImpl.commit(TransactionImpl.java:104)",
+              "class": "org.hibernate.engine.transaction.internal.TransactionImpl",
+              "method": "commit",
+              "file": "TransactionImpl.java",
+              "line": 104,
+              "log_line": 19,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 2
+            },
+            {
+              "raw": "at com.acme.order.listener.OrderAuditListener.beforeCommit(OrderAuditListener.java:38)",
+              "class": "com.acme.order.listener.OrderAuditListener",
+              "method": "beforeCommit",
+              "file": "OrderAuditListener.java",
+              "line": 38,
+              "log_line": 20,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 2
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 3,
+          "type": "java.lang.NullPointerException",
+          "message": "Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 1 of \"java.util.List\" is null",
+          "log_line": 21,
+          "raw": "Caused by: java.lang.NullPointerException: Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 1 of \"java.util.List\" is null",
+          "frames": [
+            {
+              "raw": "at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52)",
+              "class": "com.acme.order.assembler.OrderAssembler",
+              "method": "toDetail",
+              "file": "OrderAssembler.java",
+              "line": 52,
+              "log_line": 22,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 3
+            },
+            {
+              "raw": "at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:41)",
+              "class": "com.acme.order.assembler.OrderAssembler",
+              "method": "toDetail",
+              "file": "OrderAssembler.java",
+              "line": 41,
+              "log_line": 23,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 3
+            },
+            {
+              "raw": "at com.acme.order.service.OrderQueryService.query(OrderQueryService.java:110)",
+              "class": "com.acme.order.service.OrderQueryService",
+              "method": "query",
+              "file": "OrderQueryService.java",
+              "line": 110,
+              "log_line": 24,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 3
+            }
+          ],
+          "frames_truncated": false
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "java.lang.NullPointerException",
+          "message": "Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 2 of \"java.util.List\" is null",
+          "log_line": 28,
+          "raw": "java.lang.NullPointerException: Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 2 of \"java.util.List\" is null",
+          "frames": [
+            {
+              "raw": "at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52)",
+              "class": "com.acme.order.assembler.OrderAssembler",
+              "method": "toDetail",
+              "file": "OrderAssembler.java",
+              "line": 52,
+              "log_line": 29,
+              "is_business": true
+            },
+            {
+              "raw": "at com.acme.order.service.OrderQueryService.query(OrderQueryService.java:110)",
+              "class": "com.acme.order.service.OrderQueryService",
+              "method": "query",
+              "file": "OrderQueryService.java",
+              "line": 110,
+              "log_line": 30,
+              "is_business": true
+            },
+            {
+              "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:64)",
+              "class": "com.acme.order.controller.OrderController",
+              "method": "detail",
+              "file": "OrderController.java",
+              "line": 64,
+              "log_line": 31,
+              "is_business": true
+            }
+          ],
+          "frames_truncated": false
+        }
+      ]
+    }
+  ],
+  "exceptions": [
+    {
+      "log_line": 4,
+      "type": "org.springframework.web.util.NestedServletException",
+      "message": "Request processing failed; nested exception is org.springframework.transaction.TransactionSystemException: Could not commit JPA transaction",
+      "depth": 0,
+      "is_caused_by": false
+    },
+    {
+      "log_line": 11,
+      "type": "org.springframework.transaction.TransactionSystemException",
+      "message": "Could not commit JPA transaction",
+      "depth": 1,
+      "is_caused_by": true
+    },
+    {
+      "log_line": 17,
+      "type": "javax.persistence.RollbackException",
+      "message": "Error while committing the transaction",
+      "depth": 2,
+      "is_caused_by": true
+    },
+    {
+      "log_line": 21,
+      "type": "java.lang.NullPointerException",
+      "message": "Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 1 of \"java.util.List\" is null",
+      "depth": 3,
+      "is_caused_by": true
+    },
+    {
+      "log_line": 28,
+      "type": "java.lang.NullPointerException",
+      "message": "Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 2 of \"java.util.List\" is null",
+      "depth": 0,
+      "is_caused_by": false
+    }
+  ],
+  "business_frames": [
+    {
+      "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:64)",
+      "class": "com.acme.order.controller.OrderController",
+      "method": "detail",
+      "file": "OrderController.java",
+      "line": 64,
+      "log_line": 9,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 0
+    },
+    {
+      "raw": "at com.acme.order.service.OrderQueryService.query(OrderQueryService.java:118)",
+      "class": "com.acme.order.service.OrderQueryService",
+      "method": "query",
+      "file": "OrderQueryService.java",
+      "line": 118,
+      "log_line": 15,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 1
+    },
+    {
+      "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:64)",
+      "class": "com.acme.order.controller.OrderController",
+      "method": "detail",
+      "file": "OrderController.java",
+      "line": 64,
+      "log_line": 16,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 1
+    },
+    {
+      "raw": "at com.acme.order.listener.OrderAuditListener.beforeCommit(OrderAuditListener.java:38)",
+      "class": "com.acme.order.listener.OrderAuditListener",
+      "method": "beforeCommit",
+      "file": "OrderAuditListener.java",
+      "line": 38,
+      "log_line": 20,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 2
+    },
+    {
+      "raw": "at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52)",
+      "class": "com.acme.order.assembler.OrderAssembler",
+      "method": "toDetail",
+      "file": "OrderAssembler.java",
+      "line": 52,
+      "log_line": 22,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 3
+    },
+    {
+      "raw": "at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:41)",
+      "class": "com.acme.order.assembler.OrderAssembler",
+      "method": "toDetail",
+      "file": "OrderAssembler.java",
+      "line": 41,
+      "log_line": 23,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 3
+    },
+    {
+      "raw": "at com.acme.order.service.OrderQueryService.query(OrderQueryService.java:110)",
+      "class": "com.acme.order.service.OrderQueryService",
+      "method": "query",
+      "file": "OrderQueryService.java",
+      "line": 110,
+      "log_line": 24,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 3
+    }
+  ],
+  "first_business_frame": {
+    "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:64)",
+    "class": "com.acme.order.controller.OrderController",
+    "method": "detail",
+    "file": "OrderController.java",
+    "line": 64,
+    "log_line": 9,
+    "is_business": true,
+    "chain_index": 0,
+    "depth": 0
+  },
+  "root_business_frame": {
+    "raw": "at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52)",
+    "class": "com.acme.order.assembler.OrderAssembler",
+    "method": "toDetail",
+    "file": "OrderAssembler.java",
+    "line": 52,
+    "log_line": 22,
+    "is_business": true,
+    "chain_index": 0,
+    "depth": 3
+  },
+  "error_lines": [
+    {
+      "log_line": 3,
+      "level": "ERROR",
+      "text": "2026-10-31 21:04:02.113 ERROR 1 --- [http-nio-8080-exec-5] c.a.o.c.OrderController : 查询订单详情失败 orderId=SO20261031001"
+    },
+    {
+      "log_line": 27,
+      "level": "ERROR",
+      "text": "2026-10-31 21:04:19.640 ERROR 1 --- [http-nio-8080-exec-6] c.a.o.c.OrderController : 查询订单详情失败 orderId=SO20261031007"
+    }
+  ],
+  "signals": [
+    {
+      "name": "npe",
+      "hint": "空指针：先区分三种情况——对象本身为 null、集合/数组元素为 null、自动拆箱时包装类型为 null，修法不同。",
+      "evidence": [
+        {
+          "log_line": 21,
+          "text": "Caused by: java.lang.NullPointerException: Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 1 of \"java.util.List\" is null"
+        },
+        {
+          "log_line": 28,
+          "text": "java.lang.NullPointerException: Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 2 of \"java.util.List\" is null"
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "日志包含 '... N more' 省略帧，堆栈不完整。"
+  ]
+}

@@ -1,0 +1,15 @@
+2026-11-01 08:15:02.107  INFO 1 --- [main] c.acme.order.OrderApplication        : Starting OrderApplication v2.7.1 using Java 17.0.9 on order-svc-7d9f with PID 1
+2026-11-01 08:15:02.512  WARN 1 --- [main] c.a.o.c.LegacyPropsConfig            : 配置项 order.legacy.mode 已废弃，将在 v3.0 移除
+2026-11-01 08:15:04.113  INFO 1 --- [main] c.a.o.c.HealthCheckConfig            : 健康检查端点 /actuator/health 已注册
+2026-11-01 08:15:04.887 ERROR 1 --- [main] o.s.boot.SpringApplication           : Application run failed
+org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+	at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:354)
+	at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:196)
+	at com.acme.order.config.WebServerConfig.afterPropertiesSet(WebServerConfig.java:22)
+Caused by: org.springframework.boot.web.server.PortInUseException: Port 8080 is already in use
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start(TomcatWebServer.java:229)
+	at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.startWebServer(TomcatWebServer.java:196)
+Caused by: java.net.BindException: Address already in use
+	at java.base/sun.nio.ch.Net.bind0(Native Method)
+	at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:228)
+	at org.apache.catalina.core.StandardServer.initInternal(StandardServer.java:848)

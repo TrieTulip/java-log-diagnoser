@@ -1,0 +1,247 @@
+{
+  "schema_version": "1.1",
+  "parser": {
+    "name": "parse_java_log.py",
+    "generated_at": "2026-10-31T23:43:45+08:00",
+    "lines_total": 12,
+    "lines_scanned": 12,
+    "scan_offset": 0,
+    "truncated": false,
+    "app_packages": [
+      "com.acme"
+    ]
+  },
+  "summary": {
+    "exception_count": 3,
+    "chain_count": 1,
+    "primary_chain_index": 0,
+    "chain_length": 3,
+    "has_caused_by": true,
+    "root_cause_type": "java.lang.NoSuchMethodError",
+    "root_cause_message": "'void com.google.common.base.Preconditions.checkArgument(boolean, java.lang.String, java.lang.Object)'",
+    "root_cause_log_line": 10,
+    "has_business_frame": true,
+    "frame_count": 6,
+    "oom_kind": null,
+    "primary_signals": [
+      "version_conflict",
+      "spring_context"
+    ],
+    "noise_signals": []
+  },
+  "out_of_memory": {
+    "present": false,
+    "type": null,
+    "kind": null,
+    "log_line": null,
+    "evidence": null
+  },
+  "chains": [
+    {
+      "index": 0,
+      "start_line": 4,
+      "end_line": 12,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "org.springframework.beans.factory.BeanCreationException",
+          "message": "Error creating bean with name 'orderFacade' defined in URL [jar:file:/app/lib/order-service-2.7.2.jar!/BOOT-INF/classes!/com/acme/order/facade/OrderFacade.class]: Instantiation of bean failed",
+          "log_line": 4,
+          "raw": "org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'orderFacade' defined in URL [jar:file:/app/lib/order-service-2.7.2.jar!/BOOT-INF/classes!/com/acme/order/facade/OrderFacade.class]: Instantiation of bean failed",
+          "frames": [
+            {
+              "raw": "at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1336)",
+              "class": "org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory",
+              "method": "instantiateBean",
+              "file": "AbstractAutowireCapableBeanFactory.java",
+              "line": 1336,
+              "log_line": 5,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1245)",
+              "class": "org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory",
+              "method": "createBeanInstance",
+              "file": "AbstractAutowireCapableBeanFactory.java",
+              "line": 1245,
+              "log_line": 6,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 1,
+          "type": "org.springframework.beans.BeanInstantiationException",
+          "message": "Failed to instantiate [com.acme.order.facade.OrderFacade]: Constructor threw exception",
+          "log_line": 7,
+          "raw": "Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.acme.order.facade.OrderFacade]: Constructor threw exception",
+          "frames": [
+            {
+              "raw": "at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:225)",
+              "class": "org.springframework.beans.BeanUtils",
+              "method": "instantiateClass",
+              "file": "BeanUtils.java",
+              "line": 225,
+              "log_line": 8,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at com.acme.order.config.FacadeConfig.orderFacade(FacadeConfig.java:41)",
+              "class": "com.acme.order.config.FacadeConfig",
+              "method": "orderFacade",
+              "file": "FacadeConfig.java",
+              "line": 41,
+              "log_line": 9,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 1
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 2,
+          "type": "java.lang.NoSuchMethodError",
+          "message": "'void com.google.common.base.Preconditions.checkArgument(boolean, java.lang.String, java.lang.Object)'",
+          "log_line": 10,
+          "raw": "Caused by: java.lang.NoSuchMethodError: 'void com.google.common.base.Preconditions.checkArgument(boolean, java.lang.String, java.lang.Object)'",
+          "frames": [
+            {
+              "raw": "at com.acme.order.facade.OrderFacade.<init>(OrderFacade.java:34)",
+              "class": "com.acme.order.facade.OrderFacade",
+              "method": "<init>",
+              "file": "OrderFacade.java",
+              "line": 34,
+              "log_line": 11,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 2
+            },
+            {
+              "raw": "at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)",
+              "class": "jdk.internal.reflect.NativeConstructorAccessorImpl",
+              "method": "newInstance0",
+              "file": null,
+              "line": null,
+              "log_line": 12,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 2
+            }
+          ],
+          "frames_truncated": false
+        }
+      ]
+    }
+  ],
+  "exceptions": [
+    {
+      "log_line": 4,
+      "type": "org.springframework.beans.factory.BeanCreationException",
+      "message": "Error creating bean with name 'orderFacade' defined in URL [jar:file:/app/lib/order-service-2.7.2.jar!/BOOT-INF/classes!/com/acme/order/facade/OrderFacade.class]: Instantiation of bean failed",
+      "depth": 0,
+      "is_caused_by": false
+    },
+    {
+      "log_line": 7,
+      "type": "org.springframework.beans.BeanInstantiationException",
+      "message": "Failed to instantiate [com.acme.order.facade.OrderFacade]: Constructor threw exception",
+      "depth": 1,
+      "is_caused_by": true
+    },
+    {
+      "log_line": 10,
+      "type": "java.lang.NoSuchMethodError",
+      "message": "'void com.google.common.base.Preconditions.checkArgument(boolean, java.lang.String, java.lang.Object)'",
+      "depth": 2,
+      "is_caused_by": true
+    }
+  ],
+  "business_frames": [
+    {
+      "raw": "at com.acme.order.config.FacadeConfig.orderFacade(FacadeConfig.java:41)",
+      "class": "com.acme.order.config.FacadeConfig",
+      "method": "orderFacade",
+      "file": "FacadeConfig.java",
+      "line": 41,
+      "log_line": 9,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 1
+    },
+    {
+      "raw": "at com.acme.order.facade.OrderFacade.<init>(OrderFacade.java:34)",
+      "class": "com.acme.order.facade.OrderFacade",
+      "method": "<init>",
+      "file": "OrderFacade.java",
+      "line": 34,
+      "log_line": 11,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 2
+    }
+  ],
+  "first_business_frame": {
+    "raw": "at com.acme.order.config.FacadeConfig.orderFacade(FacadeConfig.java:41)",
+    "class": "com.acme.order.config.FacadeConfig",
+    "method": "orderFacade",
+    "file": "FacadeConfig.java",
+    "line": 41,
+    "log_line": 9,
+    "is_business": true,
+    "chain_index": 0,
+    "depth": 1
+  },
+  "root_business_frame": {
+    "raw": "at com.acme.order.facade.OrderFacade.<init>(OrderFacade.java:34)",
+    "class": "com.acme.order.facade.OrderFacade",
+    "method": "<init>",
+    "file": "OrderFacade.java",
+    "line": 34,
+    "log_line": 11,
+    "is_business": true,
+    "chain_index": 0,
+    "depth": 2
+  },
+  "error_lines": [
+    {
+      "log_line": 3,
+      "level": "ERROR",
+      "text": "2026-11-01 10:22:44.556 ERROR 1 --- [main] o.s.boot.SpringApplication           : Application run failed"
+    }
+  ],
+  "signals": [
+    {
+      "name": "version_conflict",
+      "hint": "典型的依赖版本冲突：编译期与运行期类版本不一致，用 mvn dependency:tree 定位重复依赖。",
+      "in_primary_chain": true,
+      "evidence": [
+        {
+          "log_line": 10,
+          "text": "Caused by: java.lang.NoSuchMethodError: 'void com.google.common.base.Preconditions.checkArgument(boolean, java.lang.String, java.lang.Object)'",
+          "in_primary_chain": true
+        }
+      ]
+    },
+    {
+      "name": "spring_context",
+      "hint": "Spring 容器启动失败：外层异常通常只是包装，真正原因在最深一层 Caused by。",
+      "in_primary_chain": true,
+      "evidence": [
+        {
+          "log_line": 4,
+          "text": "org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'orderFacade' defined in URL [jar:file:/app/lib/order-service-2.7.2.jar!/BOOT-INF/classes!/com/acme/order/facade/OrderFacade.class]: Instantiation of bean failed",
+          "in_primary_chain": true
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

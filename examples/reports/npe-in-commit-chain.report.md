@@ -12,23 +12,23 @@
 
 ## 2. 关键证据
 
-| # | 日志行 | 证据 | 说明 |
+| # | 日志行 | 证据（逐字原文） | 说明 |
 | --- | --- | --- | --- |
-| E1 | L21 | `NullPointerException: … because the element at index 1 of "java.util.List" is null` | **[事实]** JDK 14+ 的 Helpful NPE 直接指明：是**集合元素**为 null，不是对象引用为 null |
-| E2 | L22 | `at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52)` | **[事实]** 故障点，业务代码中抛出 NPE 的那一行 |
-| E3 | L23 | `at …OrderAssembler.toDetail(OrderAssembler.java:41)` | **[事实]** 同一方法的另一重载在 `OrderAssembler.java:41` 调用 `:52`，说明第 52 行在循环/遍历体内部 |
-| E4 | L28–L29 | 另一笔订单 `SO20261031007` 在 `index 2` 报同样的错、同一行 `OrderAssembler.java:52` | **[事实]** 报错位置稳定、下标不同 → 与具体订单数据相关，可排除偶发并发问题 |
-| E5 | L20 | `at com.acme.order.listener.OrderAuditListener.beforeCommit(OrderAuditListener.java:38)` | **[事实]** 异常发生在事务**提交阶段**的审计监听器中 |
-| E6 | L9 / L3 | `OrderController.detail(OrderController.java:64)` + ERROR 行 `orderId=SO20261031001` | **[事实]** 报错点（用户代码最外层）是 GET 查询接口 |
-| E7 | L33 | `查询订单详情成功 orderId=SO20261031012` | **[事实]** 同期其他订单正常，故障面有限 |
+| E1 | L9 | `at com.acme.order.controller.OrderController.detail(OrderController.java:64)` | **[事实]** 报错点：GET 查询接口，用户代码最外层 |
+| E2 | L20 | `at com.acme.order.listener.OrderAuditListener.beforeCommit(OrderAuditListener.java:38)` | **[事实]** 异常发生在事务**提交阶段**的审计监听器中 |
+| E3 | L21 | `Caused by: java.lang.NullPointerException: … element at index 1 of "java.util.List" is null` | **[事实]** JDK 14+ 的 Helpful NPE 直接指明：是**集合元素**为 null，不是对象引用为 null |
+| E4 | L22 | `at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52)` | **[事实]** 故障点，业务代码中抛出 NPE 的那一行 |
+| E5 | L23 | `at …OrderAssembler.toDetail(OrderAssembler.java:41)` | **[事实]** 同一方法的另一重载在 `OrderAssembler.java:41` 调用 `:52`，说明第 52 行在循环/遍历体内部 |
+| E6 | L28 | `java.lang.NullPointerException: … element at index 2 of "java.util.List" is null` | **[事实]** 另一笔订单 `SO20261031007` 在 `index 2` 报同样的错、同一行 `:52` → 与具体订单数据相关，可排除偶发并发 |
+| E7 | L33 | `2026-10-31 21:06:11.229  INFO 1 --- [http-nio-8080-exec-8] … 查询订单详情成功 orderId=SO20261031012` | **[事实]** 同期其他订单正常，故障面有限 |
 
-> 证据链：GET 查询（L9/L3）→ 事务提交（L15/L17）→ 审计监听器（L20）→ 组装（`OrderAssembler.java:41`→`:52`）→ NPE（L21/L22）。
+> 证据链：GET 查询（E1/L9）→ 事务提交（E2/L20）→ 组装（`OrderAssembler.java:41`→`:52`，E5/E4）→ NPE（E3/L21）→ 另一订单复现（E6/L28）→ 同期成功（E7/L33）。
 
 ## 3. 根因假设
 
 ### H1 明细列表中存在 null 元素，组装代码未过滤就取属性（置信度：高）
 
-- **依据**：E1 明确指出 `element at index 1 … is null`；E2 定位到 `toDetail` 第 52 行；E4 显示另一笔订单在
+- **依据**：E3 明确指出 `element at index 1 … is null`；E4 定位到 `toDetail` 第 52 行；E6 显示另一笔订单在
   `index 2` 复现，符合"部分订单的明细数据缺失、列表里留下空位"。
 - **反证**：未发现反证。E7 的成功订单只说明不是全量数据问题，与"个别订单脏数据"一致。
 - **验证步骤**：
@@ -41,8 +41,9 @@
 
 ### H2 组装代码按下标写预分配列表，缺失项留下空洞（置信度：中）
 
-- **依据**：`index 1` 与 `index 2` 位置不连续且不是 0，符合"先 `new ArrayList<>(n)` 再 `set(i, …)`、
-  某次 `set` 未被调用"的特征；日志本身未提供该段代码。
+- **依据**：E5 显示 `:41` 重载调用 `:52`，说明 52 行在遍历体内；E3 与 E6 的下标分别是 1 和 2、都不是 0，
+  符合"先 `new ArrayList<>(n)` 再 `set(i, …)`、某次 `set` 未被调用"的特征（E3 + E5 + E6）。
+  日志本身未提供该段代码，闭环不完整。
 - **反证**：若列表由 JPA 关联映射直接产生，Hibernate 不会生成 null 元素，本条不成立。
 - **验证步骤**：
   1. 查看 `OrderQueryService.java:110` 附近如何构建 `items`。
@@ -51,21 +52,24 @@
      — 期望观察：命中则 H2 可能性上升。
 - **若验证不成立**：转向 H3，或确认 H1。
 
-### H3 订单详情缓存快照中存了 null 元素（置信度：低）
+### H3 明细数据在写入侧落了 null 记录（脏数据，置信度：低）
 
-- **依据**：`OrderQueryService.query` 是详情查询入口（L24），这类接口通常有缓存；日志未出现缓存相关关键字，仅有位置线索。
-- **反证**：日志中没有任何 cache/redis 相关输出，缺乏支撑。
+- **依据**：E3、E6 表明 null 与具体订单绑定，且两笔订单下标不同，更可能来自数据本身而非固定代码分支；
+  但日志没有明细数据，无法分辨 null 是"缺行"还是"写了空值"。
+- **反证**：没有直接反证；若 H2 成立，null 由代码而非数据产生，本条降级为线索。
 - **验证步骤**：
-  1. `redis-cli --scan --pattern 'order:detail:SO2026103100*'` 后用 `GET <key>` 查看快照内容。
-     — 期望观察：JSON 数组中存在 `null` 元素。
+  1. 按 H1 的 SQL 核对两笔订单明细条数与页面展示条数是否一致。
+     — 期望观察：条数不足 → "缺行"。
+  2. 按 H1 的 SQL 检查是否存在 `order_id` 为空的明细行。
+     — 期望观察：存在 → "写了空值"。
 - **若验证不成立**：放弃该假设，回到 H1/H2。
 
 **已排除**：
 
-- **数据库不可达 / 连接池耗尽**：日志无 `SQLException`、`HikariPool`、`Connection refused` 等信号（`signals` 只命中 `npe`），
-  且 E7 同期查询成功。
+- **数据库不可达 / 连接池耗尽**：E3 的根因是 NPE，日志无 `SQLException`、`HikariPool`、`Connection refused` 等信号
+  （`signals` 只命中 `npe`），且 E7 同期查询成功。
 - **内存问题**：`out_of_memory.present = false`，无 `OutOfMemoryError`、无 GC 相关输出。
-- **并发竞争**：两次异常分别在 `exec-5`、`exec-6` 线程，堆栈中无锁等待帧；同一行稳定复现，更像数据问题而非竞态。
+- **并发竞争**：两次异常分别在 `exec-5`、`exec-6` 线程，堆栈中无锁等待帧；E6 在同一源码行稳定复现，更像数据问题而非竞态。
 
 ## 4. 修复建议
 
@@ -82,7 +86,7 @@
 | --- | --- | --- |
 | `OrderAssembler.java:52` | 遍历前 `filter(Objects::nonNull)`；保留 WARN 日志带 `orderId` + 下标，便于回溯脏数据 | 低 |
 | `t_order_item` 数据 | 清理历史孤儿/缺失明细；补 `order_id` 非空约束或应用层校验；删除订单时级联清理 | 中，需先在影子库校验 |
-| `OrderQueryService.java:118` | 查询接口标 `@Transactional(readOnly = true)`，避免读路径进入提交阶段（E5 显示查询竟走到 `doCommit`） | 中，需回归审计逻辑 |
+| `OrderQueryService.java:118` | 查询接口标 `@Transactional(readOnly = true)`，避免读路径进入提交阶段（E2 显示查询竟走到 `doCommit`） | 中，需回归审计逻辑 |
 | `OrderAuditListener.java:38` | 审计写入不应依赖业务对象完整性；建议改为事务提交后异步落库 | 中，需与审计方确认 |
 | 监控告警 | 对 `element at index .* is null`、`OrderAssembler.java:52` 相关 ERROR 增设阈值告警 | 低 |
 
@@ -100,7 +104,7 @@ List<SkuVO> skus = items.stream()
 
 | 目的 | 命令 | 说明 / 期望观察 |
 | --- | --- | --- |
-| 获取应用 PID | `jps -l` | `<PID>` 取自输出中主类为 `com.acme.order.OrderApplication` 的进程 |
+| 获取应用 PID | `jps -l` | `<PID>` 取自主类名以 `OrderApplication` 结尾的进程（日志首行为缩写形式 `c.acme.order.OrderApplication`，展开为 `com.acme.order` 是推断，故此处只按后缀匹配） |
 | 确认故障是否仍在发生 | `grep -c "OrderAssembler.java:52" </path/to/app.log>` | 计数应与失败请求数一致；持续增长说明仍在触发 |
 | 核对这两笔订单的明细条数 | `mysql -h<HOST> -u<USER> -p -e "SELECT order_id, COUNT(*) FROM t_order_item WHERE order_id IN ('SO20261031001','SO20261031007') GROUP BY order_id;"` | 返回 0 行或条数不足 → 支持 H1；条数正常 → 转 H2 |
 | 检查是否有线程卡在组装逻辑 | `jstack <PID> \| grep -A 5 "OrderAssembler"` | 正常应几乎无输出；大量线程停留说明还存在阻塞，而非单纯数据问题 |

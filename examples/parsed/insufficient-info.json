@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.1",
+  "parser": {
+    "name": "parse_java_log.py",
+    "generated_at": "2026-10-31T23:43:45+08:00",
+    "lines_total": 4,
+    "lines_scanned": 4,
+    "scan_offset": 0,
+    "truncated": false,
+    "app_packages": [
+      "com.acme"
+    ]
+  },
+  "summary": {
+    "exception_count": 1,
+    "chain_count": 1,
+    "primary_chain_index": 0,
+    "chain_length": 1,
+    "has_caused_by": false,
+    "root_cause_type": "java.lang.IllegalStateException",
+    "root_cause_message": "库存扣减返回失败码 STOCK_LOCK_FAIL",
+    "root_cause_log_line": 3,
+    "has_business_frame": false,
+    "frame_count": 0,
+    "oom_kind": null,
+    "primary_signals": [],
+    "noise_signals": []
+  },
+  "out_of_memory": {
+    "present": false,
+    "type": null,
+    "kind": null,
+    "log_line": null,
+    "evidence": null
+  },
+  "chains": [
+    {
+      "index": 0,
+      "start_line": 3,
+      "end_line": 3,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "java.lang.IllegalStateException",
+          "message": "库存扣减返回失败码 STOCK_LOCK_FAIL",
+          "log_line": 3,
+          "raw": "java.lang.IllegalStateException: 库存扣减返回失败码 STOCK_LOCK_FAIL",
+          "frames": [],
+          "frames_truncated": false
+        }
+      ]
+    }
+  ],
+  "exceptions": [
+    {
+      "log_line": 3,
+      "type": "java.lang.IllegalStateException",
+      "message": "库存扣减返回失败码 STOCK_LOCK_FAIL",
+      "depth": 0,
+      "is_caused_by": false
+    }
+  ],
+  "business_frames": [],
+  "first_business_frame": null,
+  "root_business_frame": null,
+  "error_lines": [
+    {
+      "log_line": 2,
+      "level": "ERROR",
+      "text": "2026-11-01 09:12:03.551 ERROR 1 --- [http-nio-8080-exec-2] c.a.o.c.OrderController             : 下单失败 orderId=SO20261101033"
+    }
+  ],
+  "signals": [],
+  "warnings": [
+    "异常只有消息、没有任何堆栈帧（at ...），无法定位代码行；请让用户提供完整堆栈后重跑。"
+  ]
+}

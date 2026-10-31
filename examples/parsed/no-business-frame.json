@@ -1,0 +1,170 @@
+{
+  "schema_version": "1.1",
+  "parser": {
+    "name": "parse_java_log.py",
+    "generated_at": "2026-10-31T23:43:46+08:00",
+    "lines_total": 11,
+    "lines_scanned": 11,
+    "scan_offset": 0,
+    "truncated": false,
+    "app_packages": [
+      "com.acme"
+    ]
+  },
+  "summary": {
+    "exception_count": 2,
+    "chain_count": 1,
+    "primary_chain_index": 0,
+    "chain_length": 2,
+    "has_caused_by": true,
+    "root_cause_type": "org.springframework.beans.factory.NoSuchBeanDefinitionException",
+    "root_cause_message": "No qualifying bean of type 'com.acme.order.client.StockClient' available: expected at least 1 bean which qualifies as autowire candidate",
+    "root_cause_log_line": 9,
+    "has_business_frame": false,
+    "frame_count": 5,
+    "oom_kind": null,
+    "primary_signals": [
+      "spring_context"
+    ],
+    "noise_signals": []
+  },
+  "out_of_memory": {
+    "present": false,
+    "type": null,
+    "kind": null,
+    "log_line": null,
+    "evidence": null
+  },
+  "chains": [
+    {
+      "index": 0,
+      "start_line": 5,
+      "end_line": 11,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "org.springframework.beans.factory.UnsatisfiedDependencyException",
+          "message": "Error creating bean with name 'orderController' defined in file [/app/classes/com/acme/order/web/OrderController.class]: Unsatisfied dependency expressed through constructor parameter 0",
+          "log_line": 5,
+          "raw": "org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'orderController' defined in file [/app/classes/com/acme/order/web/OrderController.class]: Unsatisfied dependency expressed through constructor parameter 0",
+          "frames": [
+            {
+              "raw": "at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:800)",
+              "class": "org.springframework.beans.factory.support.ConstructorResolver",
+              "method": "createArgumentArray",
+              "file": "ConstructorResolver.java",
+              "line": 800,
+              "log_line": 6,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:237)",
+              "class": "org.springframework.beans.factory.support.ConstructorResolver",
+              "method": "autowireConstructor",
+              "file": "ConstructorResolver.java",
+              "line": 237,
+              "log_line": 7,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1244)",
+              "class": "org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory",
+              "method": "createBeanInstance",
+              "file": "AbstractAutowireCapableBeanFactory.java",
+              "line": 1244,
+              "log_line": 8,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 1,
+          "type": "org.springframework.beans.factory.NoSuchBeanDefinitionException",
+          "message": "No qualifying bean of type 'com.acme.order.client.StockClient' available: expected at least 1 bean which qualifies as autowire candidate",
+          "log_line": 9,
+          "raw": "Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.acme.order.client.StockClient' available: expected at least 1 bean which qualifies as autowire candidate",
+          "frames": [
+            {
+              "raw": "at org.springframework.beans.factory.support.DefaultListableBeanFactory.raiseNoMatchingBeanFound(DefaultListableBeanFactory.java:1801)",
+              "class": "org.springframework.beans.factory.support.DefaultListableBeanFactory",
+              "method": "raiseNoMatchingBeanFound",
+              "file": "DefaultListableBeanFactory.java",
+              "line": 1801,
+              "log_line": 10,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1380)",
+              "class": "org.springframework.beans.factory.support.DefaultListableBeanFactory",
+              "method": "doResolveDependency",
+              "file": "DefaultListableBeanFactory.java",
+              "line": 1380,
+              "log_line": 11,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            }
+          ],
+          "frames_truncated": false
+        }
+      ]
+    }
+  ],
+  "exceptions": [
+    {
+      "log_line": 5,
+      "type": "org.springframework.beans.factory.UnsatisfiedDependencyException",
+      "message": "Error creating bean with name 'orderController' defined in file [/app/classes/com/acme/order/web/OrderController.class]: Unsatisfied dependency expressed through constructor parameter 0",
+      "depth": 0,
+      "is_caused_by": false
+    },
+    {
+      "log_line": 9,
+      "type": "org.springframework.beans.factory.NoSuchBeanDefinitionException",
+      "message": "No qualifying bean of type 'com.acme.order.client.StockClient' available: expected at least 1 bean which qualifies as autowire candidate",
+      "depth": 1,
+      "is_caused_by": true
+    }
+  ],
+  "business_frames": [],
+  "first_business_frame": null,
+  "root_business_frame": null,
+  "error_lines": [
+    {
+      "log_line": 4,
+      "level": "ERROR",
+      "text": "2026-11-01 11:20:04.512 ERROR 1 --- [main] o.s.boot.SpringApplication           : Application run failed"
+    }
+  ],
+  "signals": [
+    {
+      "name": "spring_context",
+      "hint": "Spring 容器启动失败：外层异常通常只是包装，真正原因在最深一层 Caused by。",
+      "in_primary_chain": true,
+      "evidence": [
+        {
+          "log_line": 5,
+          "text": "org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'orderController' defined in file [/app/classes/com/acme/order/web/OrderController.class]: Unsatisfied dependency expressed through constructor parameter 0",
+          "in_primary_chain": true
+        },
+        {
+          "log_line": 9,
+          "text": "Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.acme.order.client.StockClient' available: expected at least 1 bean which qualifies as autowire candidate",
+          "in_primary_chain": true
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "已指定业务根包 com.acme，但日志中没有属于该包的堆栈帧：可能根包写错、业务帧被日志配置裁剪，或异常确实发生在框架内部。"
+  ]
+}

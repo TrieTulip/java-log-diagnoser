@@ -1,0 +1,12 @@
+2026-11-01 10:22:41.003  INFO 1 --- [main] c.acme.order.OrderApplication        : Starting OrderApplication v2.7.2 using Java 17.0.9 with PID 1
+2026-11-01 10:22:41.881  INFO 1 --- [main] c.a.o.c.FeatureFlags                 : 功能开关加载完成，共 12 项
+2026-11-01 10:22:44.556 ERROR 1 --- [main] o.s.boot.SpringApplication           : Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'orderFacade' defined in URL [jar:file:/app/lib/order-service-2.7.2.jar!/BOOT-INF/classes!/com/acme/order/facade/OrderFacade.class]: Instantiation of bean failed
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1336)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1245)
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [com.acme.order.facade.OrderFacade]: Constructor threw exception
+	at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:225)
+	at com.acme.order.config.FacadeConfig.orderFacade(FacadeConfig.java:41)
+Caused by: java.lang.NoSuchMethodError: 'void com.google.common.base.Preconditions.checkArgument(boolean, java.lang.String, java.lang.Object)'
+	at com.acme.order.facade.OrderFacade.<init>(OrderFacade.java:34)
+	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)

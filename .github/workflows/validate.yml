@@ -7,17 +7,59 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 下限与上限都跑，避免用了新语法却在用户机器上崩
+        python-version: ["3.9", "3.12"]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
-      - name: 结构自检（frontmatter / 文件 / 锚点 / 行号）
+      # 结构与内容自检：示例四件套、parsed 快照与当前脚本逐字段一致、
+      # L<n> 指向真实非空行、报告七节、危险命令、字段名真实性、
+      # R1 类名可回溯、R2 绝对化断言、审查样例判定自洽
+      - name: 自检
         run: python scripts/validate_skill.py
 
-      - name: 脚本冒烟（示例必须解析出 4 层主链）
+      # 报告硬校验：逐份跑用户真正会用的那个命令，退出码不为 0 即失败
+      # 与"自检"分开，是因为这一层要保证的是"交付给用户的脚本能跑、能过"
+      - name: 报告硬校验
         run: |
-          python scripts/parse_java_log.py --file examples/logs/npe-in-commit-chain.log --app-package com.acme --compact > /tmp/parsed.json
-          python -c "import json;d=json.load(open('/tmp/parsed.json',encoding='utf-8'));s=d['summary'];assert s['root_cause_type']=='java.lang.NullPointerException',s;assert s['chain_length']==4,s;assert d['root_business_frame']['line']==52,d['root_business_frame'];print('smoke ok')"
+          for log in examples/logs/*.log; do
+            name="$(basename "$log" .log)"
+            python scripts/validate_diagnosis.py \
+              --log "$log" \
+              --report "examples/reports/$name.report.md" \
+              --parsed "examples/parsed/$name.json" --quiet
+          done
+          echo "gate ok"
+
+      # 变异测试：注入 23 类缺陷（含 5 类报告侧幻觉、5 类红线与脚本语义漂移），证明上面的检查真的会红，
+      # 而不是永远打印 OK。双版本各跑一遍成本过高，放在 3.12 上跑即可
+      - name: 变异测试
+        if: matrix.python-version == '3.12'
+        run: python scripts/mutation_test.py
+
+      # 管道 / 空输入 / 截断输入：验证脚本在非文件输入下不崩、不产生幻觉行号
+      - name: 脚本冒烟
+        run: |
+          python scripts/parse_java_log.py \
+            --file examples/logs/npe-in-commit-chain.log --app-package com.acme --compact > /dev/null
+          printf 'hello\nworld\n' | python scripts/parse_java_log.py --compact > /dev/null
+          printf 'java.lang.IllegalStateException: boom\n' | python scripts/parse_java_log.py --max-lines 1 --compact > /dev/null
+          printf 'Caused by: java.io.IOException: orphan\n' | python scripts/parse_java_log.py --compact > /dev/null
+          # 硬校验的两条边界：JSON 输出可解析；空日志必须 exit 2 而不是崩栈
+          python scripts/validate_diagnosis.py \
+            --log examples/logs/npe-in-commit-chain.log \
+            --report examples/reports/npe-in-commit-chain.report.md --json > /dev/null
+          if printf '' | python scripts/validate_diagnosis.py --log - \
+               --report examples/reports/npe-in-commit-chain.report.md 2>/dev/null; then
+            echo "空日志应当 exit 2"; exit 1
+          else
+            test $? -eq 2
+          fi
+          echo "smoke ok"

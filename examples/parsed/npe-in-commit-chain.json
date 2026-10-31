@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "parser": {
     "name": "parse_java_log.py",
-    "generated_at": "2026-10-31T21:53:15+08:00",
+    "generated_at": "2026-11-01T00:55:02+08:00",
     "lines_total": 33,
     "lines_scanned": 33,
     "scan_offset": 0,
@@ -21,7 +21,12 @@
     "root_cause_message": "Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 1 of \"java.util.List\" is null",
     "root_cause_log_line": 21,
     "has_business_frame": true,
-    "oom_kind": null
+    "frame_count": 20,
+    "oom_kind": null,
+    "primary_signals": [
+      "npe"
+    ],
+    "noise_signals": []
   },
   "out_of_memory": {
     "present": false,
@@ -33,6 +38,8 @@
   "chains": [
     {
       "index": 0,
+      "start_line": 4,
+      "end_line": 24,
       "nodes": [
         {
           "depth": 0,
@@ -265,6 +272,8 @@
     },
     {
       "index": 1,
+      "start_line": 28,
+      "end_line": 31,
       "nodes": [
         {
           "depth": 0,
@@ -280,7 +289,9 @@
               "file": "OrderAssembler.java",
               "line": 52,
               "log_line": 29,
-              "is_business": true
+              "is_business": true,
+              "chain_index": 1,
+              "depth": 0
             },
             {
               "raw": "at com.acme.order.service.OrderQueryService.query(OrderQueryService.java:110)",
@@ -289,7 +300,9 @@
               "file": "OrderQueryService.java",
               "line": 110,
               "log_line": 30,
-              "is_business": true
+              "is_business": true,
+              "chain_index": 1,
+              "depth": 0
             },
             {
               "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:64)",
@@ -298,7 +311,9 @@
               "file": "OrderController.java",
               "line": 64,
               "log_line": 31,
-              "is_business": true
+              "is_business": true,
+              "chain_index": 1,
+              "depth": 0
             }
           ],
           "frames_truncated": false
@@ -460,14 +475,17 @@
     {
       "name": "npe",
       "hint": "空指针：先区分三种情况——对象本身为 null、集合/数组元素为 null、自动拆箱时包装类型为 null，修法不同。",
+      "in_primary_chain": true,
       "evidence": [
         {
           "log_line": 21,
-          "text": "Caused by: java.lang.NullPointerException: Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 1 of \"java.util.List\" is null"
+          "text": "Caused by: java.lang.NullPointerException: Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 1 of \"java.util.List\" is null",
+          "in_primary_chain": true
         },
         {
           "log_line": 28,
-          "text": "java.lang.NullPointerException: Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 2 of \"java.util.List\" is null"
+          "text": "java.lang.NullPointerException: Cannot invoke \"com.acme.order.domain.OrderItem.getSkuId()\" because the element at index 2 of \"java.util.List\" is null",
+          "in_primary_chain": false
         }
       ]
     }

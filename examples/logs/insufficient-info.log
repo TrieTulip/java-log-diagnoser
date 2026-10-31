@@ -1,0 +1,4 @@
+2026-11-01 09:11:58.201  INFO 1 --- [http-nio-8080-exec-2] c.a.o.c.OrderController             : 接收下单请求 orderId=SO20261101033
+2026-11-01 09:12:03.551 ERROR 1 --- [http-nio-8080-exec-2] c.a.o.c.OrderController             : 下单失败 orderId=SO20261101033
+java.lang.IllegalStateException: 库存扣减返回失败码 STOCK_LOCK_FAIL
+2026-11-01 09:12:04.002  WARN 1 --- [http-nio-8080-exec-2] c.a.o.c.GlobalExceptionHandler      : 已转换为 HTTP 500，traceId=9c1e77

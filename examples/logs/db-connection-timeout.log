@@ -1,0 +1,30 @@
+2026-11-01 09:12:03.101  INFO 1 --- [scheduling-1] c.acme.job.ReportJob                : 日报任务开始
+2026-11-01 09:12:03.455  WARN 1 --- [scheduling-1] c.acme.job.ReportJob                : 昨日报表明细为空，跳过
+2026-11-01 09:15:22.301  INFO 1 --- [http-nio-8080-exec-7] c.acme.order.OrderController     : 查询订单 orderNo=SO20261101001
+2026-11-01 09:15:52.318 ERROR 1 --- [http-nio-8080-exec-7] c.acme.order.OrderController     : 查询订单失败
+org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection; nested exception is java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:83)
+	at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:639)
+	at com.acme.order.dao.OrderDao.selectByOrderNo(OrderDao.java:47)
+	at com.acme.order.service.OrderQueryService.loadOrder(OrderQueryService.java:88)
+	at com.acme.order.controller.OrderController.detail(OrderController.java:36)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+	... 42 more
+Caused by: java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms
+	at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)
+	at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:197)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)
+	... 47 more
+Caused by: java.net.SocketTimeoutException: connect timed out
+	at java.base/java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.base/java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:399)
+	... 51 more
+2026-11-01 09:15:52.401  INFO 1 --- [http-nio-8080-exec-7] c.acme.order.OrderController     : 返回兜底结果
+2026-11-01 09:16:05.010  INFO 1 --- [http-nio-8080-exec-9] c.acme.order.OrderController     : 查询订单 orderNo=SO20261101002
+2026-11-01 09:16:05.090  INFO 1 --- [http-nio-8080-exec-9] c.acme.order.OrderController     : 查询成功
+2026-11-01 09:20:11.777 ERROR 1 --- [scheduling-1] c.acme.job.ReportJob                : 日报任务异常
+java.lang.IllegalStateException: 报表目录不可写: /data/report
+	at com.acme.job.ReportJob.run(ReportJob.java:64)
+	at java.base/java.lang.Thread.run(Thread.java:834)

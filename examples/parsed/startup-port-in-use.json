@@ -1,0 +1,258 @@
+{
+  "schema_version": "1.1",
+  "parser": {
+    "name": "parse_java_log.py",
+    "generated_at": "2026-10-31T23:43:47+08:00",
+    "lines_total": 15,
+    "lines_scanned": 15,
+    "scan_offset": 0,
+    "truncated": false,
+    "app_packages": [
+      "com.acme"
+    ]
+  },
+  "summary": {
+    "exception_count": 3,
+    "chain_count": 1,
+    "primary_chain_index": 0,
+    "chain_length": 3,
+    "has_caused_by": true,
+    "root_cause_type": "java.net.BindException",
+    "root_cause_message": "Address already in use",
+    "root_cause_log_line": 12,
+    "has_business_frame": true,
+    "frame_count": 8,
+    "oom_kind": null,
+    "primary_signals": [
+      "spring_context",
+      "port_in_use"
+    ],
+    "noise_signals": []
+  },
+  "out_of_memory": {
+    "present": false,
+    "type": null,
+    "kind": null,
+    "log_line": null,
+    "evidence": null
+  },
+  "chains": [
+    {
+      "index": 0,
+      "start_line": 5,
+      "end_line": 15,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "org.springframework.context.ApplicationContextException",
+          "message": "Failed to start bean 'webServerStartStop'",
+          "log_line": 5,
+          "raw": "org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'",
+          "frames": [
+            {
+              "raw": "at org.springframework.context.support.DefaultLifecycleProcessor.startBeans(DefaultLifecycleProcessor.java:354)",
+              "class": "org.springframework.context.support.DefaultLifecycleProcessor",
+              "method": "startBeans",
+              "file": "DefaultLifecycleProcessor.java",
+              "line": 354,
+              "log_line": 6,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at org.springframework.context.support.DefaultLifecycleProcessor.onRefresh(DefaultLifecycleProcessor.java:196)",
+              "class": "org.springframework.context.support.DefaultLifecycleProcessor",
+              "method": "onRefresh",
+              "file": "DefaultLifecycleProcessor.java",
+              "line": 196,
+              "log_line": 7,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at com.acme.order.config.WebServerConfig.afterPropertiesSet(WebServerConfig.java:22)",
+              "class": "com.acme.order.config.WebServerConfig",
+              "method": "afterPropertiesSet",
+              "file": "WebServerConfig.java",
+              "line": 22,
+              "log_line": 8,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 0
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 1,
+          "type": "org.springframework.boot.web.server.PortInUseException",
+          "message": "Port 8080 is already in use",
+          "log_line": 9,
+          "raw": "Caused by: org.springframework.boot.web.server.PortInUseException: Port 8080 is already in use",
+          "frames": [
+            {
+              "raw": "at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.start(TomcatWebServer.java:229)",
+              "class": "org.springframework.boot.web.embedded.tomcat.TomcatWebServer",
+              "method": "start",
+              "file": "TomcatWebServer.java",
+              "line": 229,
+              "log_line": 10,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at org.springframework.boot.web.embedded.tomcat.TomcatWebServer.startWebServer(TomcatWebServer.java:196)",
+              "class": "org.springframework.boot.web.embedded.tomcat.TomcatWebServer",
+              "method": "startWebServer",
+              "file": "TomcatWebServer.java",
+              "line": 196,
+              "log_line": 11,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 2,
+          "type": "java.net.BindException",
+          "message": "Address already in use",
+          "log_line": 12,
+          "raw": "Caused by: java.net.BindException: Address already in use",
+          "frames": [
+            {
+              "raw": "at java.base/sun.nio.ch.Net.bind0(Native Method)",
+              "class": "sun.nio.ch.Net",
+              "method": "bind0",
+              "file": null,
+              "line": null,
+              "log_line": 13,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 2
+            },
+            {
+              "raw": "at java.base/sun.nio.ch.ServerSocketChannelImpl.bind(ServerSocketChannelImpl.java:228)",
+              "class": "sun.nio.ch.ServerSocketChannelImpl",
+              "method": "bind",
+              "file": "ServerSocketChannelImpl.java",
+              "line": 228,
+              "log_line": 14,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 2
+            },
+            {
+              "raw": "at org.apache.catalina.core.StandardServer.initInternal(StandardServer.java:848)",
+              "class": "org.apache.catalina.core.StandardServer",
+              "method": "initInternal",
+              "file": "StandardServer.java",
+              "line": 848,
+              "log_line": 15,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 2
+            }
+          ],
+          "frames_truncated": false
+        }
+      ]
+    }
+  ],
+  "exceptions": [
+    {
+      "log_line": 5,
+      "type": "org.springframework.context.ApplicationContextException",
+      "message": "Failed to start bean 'webServerStartStop'",
+      "depth": 0,
+      "is_caused_by": false
+    },
+    {
+      "log_line": 9,
+      "type": "org.springframework.boot.web.server.PortInUseException",
+      "message": "Port 8080 is already in use",
+      "depth": 1,
+      "is_caused_by": true
+    },
+    {
+      "log_line": 12,
+      "type": "java.net.BindException",
+      "message": "Address already in use",
+      "depth": 2,
+      "is_caused_by": true
+    }
+  ],
+  "business_frames": [
+    {
+      "raw": "at com.acme.order.config.WebServerConfig.afterPropertiesSet(WebServerConfig.java:22)",
+      "class": "com.acme.order.config.WebServerConfig",
+      "method": "afterPropertiesSet",
+      "file": "WebServerConfig.java",
+      "line": 22,
+      "log_line": 8,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 0
+    }
+  ],
+  "first_business_frame": {
+    "raw": "at com.acme.order.config.WebServerConfig.afterPropertiesSet(WebServerConfig.java:22)",
+    "class": "com.acme.order.config.WebServerConfig",
+    "method": "afterPropertiesSet",
+    "file": "WebServerConfig.java",
+    "line": 22,
+    "log_line": 8,
+    "is_business": true,
+    "chain_index": 0,
+    "depth": 0
+  },
+  "root_business_frame": {
+    "raw": "at com.acme.order.config.WebServerConfig.afterPropertiesSet(WebServerConfig.java:22)",
+    "class": "com.acme.order.config.WebServerConfig",
+    "method": "afterPropertiesSet",
+    "file": "WebServerConfig.java",
+    "line": 22,
+    "log_line": 8,
+    "is_business": true,
+    "chain_index": 0,
+    "depth": 0
+  },
+  "error_lines": [
+    {
+      "log_line": 4,
+      "level": "ERROR",
+      "text": "2026-11-01 08:15:04.887 ERROR 1 --- [main] o.s.boot.SpringApplication           : Application run failed"
+    }
+  ],
+  "signals": [
+    {
+      "name": "spring_context",
+      "hint": "Spring 容器启动失败：外层异常通常只是包装，真正原因在最深一层 Caused by。",
+      "in_primary_chain": true,
+      "evidence": [
+        {
+          "log_line": 5,
+          "text": "org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'",
+          "in_primary_chain": true
+        }
+      ]
+    },
+    {
+      "name": "port_in_use",
+      "hint": "端口被占用：确认是否有残留进程、是否同机多实例、容器端口映射是否冲突。",
+      "in_primary_chain": true,
+      "evidence": [
+        {
+          "log_line": 12,
+          "text": "Caused by: java.net.BindException: Address already in use",
+          "in_primary_chain": true
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

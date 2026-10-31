@@ -29,7 +29,7 @@ import re
 import sys
 from datetime import datetime, timezone
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 
 # --------------------------------------------------------------------------
 # 正则定义
@@ -176,8 +176,21 @@ def match_oom_kind(message: str):
     return None
 
 
-def scan_signals(all_lines, offset: int, max_hits: int = 3):
-    """扫描日志正文中的特征串，返回 [{name, hint, evidence:[{log_line, text}]}]。"""
+def scan_signals(all_lines, offset: int, chains=(), primary_index=None, max_hits: int = 3):
+    """扫描日志正文中的特征串，返回 [{name, hint, in_primary_chain, evidence:[...]}]。
+
+    信号是**全文**扫描的结果，日志里的无关错误同样会命中（例如一次超时噪声会命中
+    timeout）。因此每条信号额外给出 in_primary_chain：只有落在主链行区间内的证据，
+    才允许作为主链根因的支撑。这一字段用来防止把噪声链的特征当成结论依据。
+    """
+    spans = [(c.get("start_line"), c.get("end_line"), c.get("index")) for c in chains]
+
+    def in_primary(line_no: int) -> bool:
+        for start, end, index in spans:
+            if start is not None and end is not None and start <= line_no <= end:
+                return index == primary_index
+        return False
+
     hits = {name: [] for name, _, _ in SIGNAL_RULES}
     for i, raw in enumerate(all_lines):
         line = raw.rstrip()
@@ -187,11 +200,21 @@ def scan_signals(all_lines, offset: int, max_hits: int = 3):
             if len(hits[name]) >= max_hits:
                 continue
             if pattern.search(line):
-                hits[name].append({"log_line": offset + i + 1, "text": line.strip()[:300]})
+                log_line = offset + i + 1
+                hits[name].append({
+                    "log_line": log_line,
+                    "text": line.strip()[:300],
+                    "in_primary_chain": in_primary(log_line),
+                })
     result = []
     for name, _pattern, hint in SIGNAL_RULES:
         if hits[name]:
-            result.append({"name": name, "hint": hint, "evidence": hits[name]})
+            result.append({
+                "name": name,
+                "hint": hint,
+                "in_primary_chain": any(e["in_primary_chain"] for e in hits[name]),
+                "evidence": hits[name],
+            })
     return result
 
 
@@ -227,7 +250,19 @@ def parse_log(text, app_packages=(), extra_noise=(), max_lines=50000,
     def flush_chain():
         nonlocal nodes, current
         if nodes:
-            chains.append({"index": len(chains), "nodes": nodes})
+            # 行区间用"异常头与帧实际占用的最大行号"反推，不依赖循环状态，
+            # 避免把下一段日志的行算进当前链（会让信号归属判错）。
+            end_line = nodes[0]["log_line"]
+            for node in nodes:
+                end_line = max(end_line, node["log_line"])
+                for fr in node["frames"]:
+                    end_line = max(end_line, fr["log_line"])
+            chains.append({
+                "index": len(chains),
+                "start_line": nodes[0]["log_line"],
+                "end_line": end_line,
+                "nodes": nodes,
+            })
         nodes, current = [], None
 
     for i, raw in enumerate(all_lines):
@@ -321,18 +356,37 @@ def parse_log(text, app_packages=(), extra_noise=(), max_lines=50000,
         if primary is None or len(chain["nodes"]) >= len(primary["nodes"]):
             primary = chain
 
+    # ---------------- 后置：补齐帧归属 ----------------
+    # 所有链的帧都要带 chain_index / depth。只给主链补会导致非主链帧缺字段，
+    # 下游按 fr["depth"] 取值时抛 KeyError——排查"这条帧属于哪条链"恰恰是最需要这两个字段的场景。
+    for chain in chains:
+        for node in chain["nodes"]:
+            for fr in node["frames"]:
+                fr["chain_index"] = chain["index"]
+                fr["depth"] = node["depth"]
+
     # ---------------- 后置：业务帧聚合（只针对主链，避免多段日志互相污染） ----------------
     business_frames = []
     if primary:
         for node in primary["nodes"]:
             for fr in node["frames"]:
-                fr["chain_index"] = primary["index"]
-                fr["depth"] = node["depth"]
                 if fr.get("is_business"):
                     business_frames.append(fr)
     business_frames = business_frames[:20]
 
-    first_business_frame = business_frames[0] if business_frames else None
+    # 报错点 = 业务代码最外层（请求入口）。栈帧自上而下是「被调用者 → 调用者」，
+    # 所以取最浅节点里**最靠下**的业务帧；取帧顶会拿到 DAO/内层方法，把入口认错。
+    first_business_frame = None
+    if primary:
+        for node in primary["nodes"]:
+            for fr in reversed(node["frames"]):
+                if fr.get("is_business"):
+                    first_business_frame = fr
+                    break
+            if first_business_frame:
+                break
+
+    # 故障点 = 最深 Caused by 中最接近抛出点的业务帧（自深向浅回溯，取该节点的第一个业务帧）
     root_business_frame = None
     if primary:
         for node in reversed(primary["nodes"]):
@@ -368,6 +422,9 @@ def parse_log(text, app_packages=(), extra_noise=(), max_lines=50000,
             }
 
     # ---------------- 摘要 ----------------
+    total_frames = sum(len(node["frames"]) for chain in chains for node in chain["nodes"])
+    signals = scan_signals(all_lines, offset, chains, primary["index"] if primary else None)
+
     root_node = primary["nodes"][-1] if primary else None
     summary = {
         "exception_count": len(exceptions),
@@ -379,7 +436,10 @@ def parse_log(text, app_packages=(), extra_noise=(), max_lines=50000,
         "root_cause_message": root_node["message"] if root_node else None,
         "root_cause_log_line": root_node["log_line"] if root_node else None,
         "has_business_frame": bool(business_frames),
+        "frame_count": total_frames,
         "oom_kind": oom["kind"],
+        "primary_signals": [s["name"] for s in signals if s["in_primary_chain"]],
+        "noise_signals": [s["name"] for s in signals if not s["in_primary_chain"]],
     }
 
     # ---------------- 告警 ----------------
@@ -391,12 +451,21 @@ def parse_log(text, app_packages=(), extra_noise=(), max_lines=50000,
         warnings.append("日志包含 '... N more' 省略帧，堆栈不完整。")
     if truncated:
         warnings.append(f"日志共 {total_lines} 行，仅分析最后 {max_lines} 行（行号已还原为原始行号）。")
-    if chains and not business_frames:
-        warnings.append("未识别出业务代码帧：请用 --app-package 指定应用根包名后重跑。")
+    if chains and total_frames == 0:
+        # 这里不能建议加 --app-package：根本没有帧，加参数也不会有业务帧
+        warnings.append("异常只有消息、没有任何堆栈帧（at ...），无法定位代码行；"
+                        "请让用户提供完整堆栈后重跑。")
+    elif chains and not business_frames:
+        if app:
+            # 已经指定过根包却仍无命中：不能再让用户"加参数"，那是白跑一遍
+            warnings.append(
+                f"已指定业务根包 {', '.join(app)}，但日志中没有属于该包的堆栈帧："
+                "可能根包写错、业务帧被日志配置裁剪，或异常确实发生在框架内部。")
+        else:
+            warnings.append("已解析到堆栈帧，但其中没有业务代码帧："
+                            "请用 --app-package 指定应用根包名后重跑。")
     if not error_lines and not chains:
         warnings.append("未识别到 ERROR/FATAL 级别的日志行。")
-
-    signals = scan_signals(all_lines, offset)
 
     return {
         "schema_version": SCHEMA_VERSION,

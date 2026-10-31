@@ -1,0 +1,11 @@
+2026-11-01 11:20:01.882  INFO 1 --- [main] c.acme.order.OrderApplication        : Starting OrderApplication v2.7.3 using Java 17.0.9 with PID 1
+2026-11-01 11:20:03.104  WARN 1 --- [main] c.a.o.c.FeignConfig                  : 远程客户端 order-stock 使用默认超时 1000ms
+2026-11-01 11:20:03.775  INFO 1 --- [main] c.a.o.c.HealthCheckConfig            : 健康检查端点 /actuator/health 已注册
+2026-11-01 11:20:04.512 ERROR 1 --- [main] o.s.boot.SpringApplication           : Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'orderController' defined in file [/app/classes/com/acme/order/web/OrderController.class]: Unsatisfied dependency expressed through constructor parameter 0
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:800)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:237)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1244)
+Caused by: org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.acme.order.client.StockClient' available: expected at least 1 bean which qualifies as autowire candidate
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.raiseNoMatchingBeanFound(DefaultListableBeanFactory.java:1801)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1380)

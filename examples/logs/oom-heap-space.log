@@ -1,0 +1,20 @@
+2026-11-01 02:00:00.914  INFO 1 --- [main] c.acme.report.ReportApplication     : Starting ReportApplication v3.1.0 on report-svc-5c8b with PID 1
+2026-11-01 02:00:03.207  INFO 1 --- [main] c.acme.report.ReportApplication     : Started ReportApplication in 2.293 seconds (JVM running for 2.71)
+2026-11-01 02:05:31.402  WARN 1 --- [http-nio-8080-exec-3] c.a.r.web.ReportController          : 报表查询耗时 1820ms，超过阈值 1000ms reportId=R20261031-118
+2026-11-01 02:08:12.115 ERROR 1 --- [http-nio-8080-exec-4] c.a.r.web.ReportController          : 拉取远程数据源失败 source=pull-center
+java.net.SocketTimeoutException: Read timed out
+	at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:288)
+	at java.base/java.net.SocketInputStream.socketRead0(Native Method)
+	at com.acme.report.remote.PullCenterClient.fetch(PullCenterClient.java:87)
+	at com.acme.report.web.ReportController.preview(ReportController.java:96)
+2026-11-01 02:10:44.318 ERROR 1 --- [scheduling-2] c.a.r.job.ReportExportJob           : 报表导出失败 reportId=R20261101-009 rows=480000
+org.springframework.web.util.NestedServletException: Handler dispatch failed; nested exception is java.lang.OutOfMemoryError: Java heap space
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1071)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:962)
+	at com.acme.report.web.ExportController.export(ExportController.java:71)
+Caused by: java.lang.OutOfMemoryError: Java heap space
+	at java.base/java.util.Arrays.copyOf(Arrays.java:3537)
+	at java.base/java.io.ByteArrayOutputStream.grow(ByteArrayOutputStream.java:120)
+	at com.acme.report.exporter.XlsxExporter.writeRow(XlsxExporter.java:214)
+	at com.acme.report.exporter.XlsxExporter.export(XlsxExporter.java:96)
+	at com.acme.report.job.ReportExportJob.run(ReportExportJob.java:58)

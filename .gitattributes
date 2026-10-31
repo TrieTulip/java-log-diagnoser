@@ -1,0 +1,9 @@
+# 统一换行，避免 Windows 检出后示例日志与 parsed 快照出现无意义差异
+* text=auto eol=lf
+
+*.log   text eol=lf
+*.json  text eol=lf
+
+# 二进制/产物
+*.jar   binary
+*.png   binary

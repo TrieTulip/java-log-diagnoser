@@ -1,6 +1,6 @@
 # Java 异常排查知识库
 
-> **加载方式**：由 `SKILL.md` 的 Step 2 按 `signals` 命中项**按节加载**，不要整篇读入。
+> **加载方式**：由 `SKILL.md` 的 Step 3.1 按 `primary_signals` 命中项**按节加载**，不要整篇读入。
 > 每节固定三段：**特征 / 排查方向 / 修复建议**，末尾附**常见误判**。
 > 锚点可直接引用，例如 `references/java-exceptions.md#npe`。
 

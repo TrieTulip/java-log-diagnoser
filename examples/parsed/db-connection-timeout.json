@@ -1,0 +1,403 @@
+{
+  "schema_version": "1.1",
+  "parser": {
+    "name": "parse_java_log.py",
+    "generated_at": "2026-11-01T00:55:58+08:00",
+    "lines_total": 30,
+    "lines_scanned": 30,
+    "scan_offset": 0,
+    "truncated": false,
+    "app_packages": [
+      "com.acme"
+    ]
+  },
+  "summary": {
+    "exception_count": 4,
+    "chain_count": 2,
+    "primary_chain_index": 0,
+    "chain_length": 3,
+    "has_caused_by": true,
+    "root_cause_type": "java.net.SocketTimeoutException",
+    "root_cause_message": "connect timed out",
+    "root_cause_log_line": 20,
+    "has_business_frame": true,
+    "frame_count": 15,
+    "oom_kind": null,
+    "primary_signals": [
+      "timeout",
+      "db_error"
+    ],
+    "noise_signals": []
+  },
+  "out_of_memory": {
+    "present": false,
+    "type": null,
+    "kind": null,
+    "log_line": null,
+    "evidence": null
+  },
+  "chains": [
+    {
+      "index": 0,
+      "start_line": 5,
+      "end_line": 22,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "org.springframework.jdbc.CannotGetJdbcConnectionException",
+          "message": "Failed to obtain JDBC Connection; nested exception is java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms",
+          "log_line": 5,
+          "raw": "org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection; nested exception is java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms",
+          "frames": [
+            {
+              "raw": "at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:83)",
+              "class": "org.springframework.jdbc.datasource.DataSourceUtils",
+              "method": "getConnection",
+              "file": "DataSourceUtils.java",
+              "line": 83,
+              "log_line": 6,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.java:639)",
+              "class": "org.springframework.jdbc.core.JdbcTemplate",
+              "method": "execute",
+              "file": "JdbcTemplate.java",
+              "line": 639,
+              "log_line": 7,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at com.acme.order.dao.OrderDao.selectByOrderNo(OrderDao.java:47)",
+              "class": "com.acme.order.dao.OrderDao",
+              "method": "selectByOrderNo",
+              "file": "OrderDao.java",
+              "line": 47,
+              "log_line": 8,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at com.acme.order.service.OrderQueryService.loadOrder(OrderQueryService.java:88)",
+              "class": "com.acme.order.service.OrderQueryService",
+              "method": "loadOrder",
+              "file": "OrderQueryService.java",
+              "line": 88,
+              "log_line": 9,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:36)",
+              "class": "com.acme.order.controller.OrderController",
+              "method": "detail",
+              "file": "OrderController.java",
+              "line": 36,
+              "log_line": 10,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at java.base/java.lang.reflect.Method.invoke(Method.java:566)",
+              "class": "java.lang.reflect.Method",
+              "method": "invoke",
+              "file": "Method.java",
+              "line": 566,
+              "log_line": 11,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)",
+              "class": "org.springframework.web.method.support.InvocableHandlerMethod",
+              "method": "doInvoke",
+              "file": "InvocableHandlerMethod.java",
+              "line": 205,
+              "log_line": 12,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 1,
+          "type": "java.sql.SQLTransientConnectionException",
+          "message": "HikariPool-1 - Connection is not available, request timed out after 30000ms",
+          "log_line": 14,
+          "raw": "Caused by: java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms",
+          "frames": [
+            {
+              "raw": "at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)",
+              "class": "com.zaxxer.hikari.pool.HikariPool",
+              "method": "createTimeoutException",
+              "file": "HikariPool.java",
+              "line": 696,
+              "log_line": 15,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at com.zaxxer.hikari.pool.HikariPool.getConnection(HikariPool.java:197)",
+              "class": "com.zaxxer.hikari.pool.HikariPool",
+              "method": "getConnection",
+              "file": "HikariPool.java",
+              "line": 197,
+              "log_line": 16,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:128)",
+              "class": "com.zaxxer.hikari.HikariDataSource",
+              "method": "getConnection",
+              "file": "HikariDataSource.java",
+              "line": 128,
+              "log_line": 17,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            },
+            {
+              "raw": "at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80)",
+              "class": "org.springframework.jdbc.datasource.DataSourceUtils",
+              "method": "getConnection",
+              "file": "DataSourceUtils.java",
+              "line": 80,
+              "log_line": 18,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 1
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 2,
+          "type": "java.net.SocketTimeoutException",
+          "message": "connect timed out",
+          "log_line": 20,
+          "raw": "Caused by: java.net.SocketTimeoutException: connect timed out",
+          "frames": [
+            {
+              "raw": "at java.base/java.net.PlainSocketImpl.socketConnect(Native Method)",
+              "class": "java.net.PlainSocketImpl",
+              "method": "socketConnect",
+              "file": null,
+              "line": null,
+              "log_line": 21,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 2
+            },
+            {
+              "raw": "at java.base/java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:399)",
+              "class": "java.net.AbstractPlainSocketImpl",
+              "method": "doConnect",
+              "file": "AbstractPlainSocketImpl.java",
+              "line": 399,
+              "log_line": 22,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 2
+            }
+          ],
+          "frames_truncated": false
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "start_line": 28,
+      "end_line": 30,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "java.lang.IllegalStateException",
+          "message": "报表目录不可写: /data/report",
+          "log_line": 28,
+          "raw": "java.lang.IllegalStateException: 报表目录不可写: /data/report",
+          "frames": [
+            {
+              "raw": "at com.acme.job.ReportJob.run(ReportJob.java:64)",
+              "class": "com.acme.job.ReportJob",
+              "method": "run",
+              "file": "ReportJob.java",
+              "line": 64,
+              "log_line": 29,
+              "is_business": true,
+              "chain_index": 1,
+              "depth": 0
+            },
+            {
+              "raw": "at java.base/java.lang.Thread.run(Thread.java:834)",
+              "class": "java.lang.Thread",
+              "method": "run",
+              "file": "Thread.java",
+              "line": 834,
+              "log_line": 30,
+              "is_business": false,
+              "chain_index": 1,
+              "depth": 0
+            }
+          ],
+          "frames_truncated": false
+        }
+      ]
+    }
+  ],
+  "exceptions": [
+    {
+      "log_line": 5,
+      "type": "org.springframework.jdbc.CannotGetJdbcConnectionException",
+      "message": "Failed to obtain JDBC Connection; nested exception is java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms",
+      "depth": 0,
+      "is_caused_by": false
+    },
+    {
+      "log_line": 14,
+      "type": "java.sql.SQLTransientConnectionException",
+      "message": "HikariPool-1 - Connection is not available, request timed out after 30000ms",
+      "depth": 1,
+      "is_caused_by": true
+    },
+    {
+      "log_line": 20,
+      "type": "java.net.SocketTimeoutException",
+      "message": "connect timed out",
+      "depth": 2,
+      "is_caused_by": true
+    },
+    {
+      "log_line": 28,
+      "type": "java.lang.IllegalStateException",
+      "message": "报表目录不可写: /data/report",
+      "depth": 0,
+      "is_caused_by": false
+    }
+  ],
+  "business_frames": [
+    {
+      "raw": "at com.acme.order.dao.OrderDao.selectByOrderNo(OrderDao.java:47)",
+      "class": "com.acme.order.dao.OrderDao",
+      "method": "selectByOrderNo",
+      "file": "OrderDao.java",
+      "line": 47,
+      "log_line": 8,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 0
+    },
+    {
+      "raw": "at com.acme.order.service.OrderQueryService.loadOrder(OrderQueryService.java:88)",
+      "class": "com.acme.order.service.OrderQueryService",
+      "method": "loadOrder",
+      "file": "OrderQueryService.java",
+      "line": 88,
+      "log_line": 9,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 0
+    },
+    {
+      "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:36)",
+      "class": "com.acme.order.controller.OrderController",
+      "method": "detail",
+      "file": "OrderController.java",
+      "line": 36,
+      "log_line": 10,
+      "is_business": true,
+      "chain_index": 0,
+      "depth": 0
+    }
+  ],
+  "first_business_frame": {
+    "raw": "at com.acme.order.controller.OrderController.detail(OrderController.java:36)",
+    "class": "com.acme.order.controller.OrderController",
+    "method": "detail",
+    "file": "OrderController.java",
+    "line": 36,
+    "log_line": 10,
+    "is_business": true,
+    "chain_index": 0,
+    "depth": 0
+  },
+  "root_business_frame": {
+    "raw": "at com.acme.order.dao.OrderDao.selectByOrderNo(OrderDao.java:47)",
+    "class": "com.acme.order.dao.OrderDao",
+    "method": "selectByOrderNo",
+    "file": "OrderDao.java",
+    "line": 47,
+    "log_line": 8,
+    "is_business": true,
+    "chain_index": 0,
+    "depth": 0
+  },
+  "error_lines": [
+    {
+      "log_line": 4,
+      "level": "ERROR",
+      "text": "2026-11-01 09:15:52.318 ERROR 1 --- [http-nio-8080-exec-7] c.acme.order.OrderController     : 查询订单失败"
+    },
+    {
+      "log_line": 27,
+      "level": "ERROR",
+      "text": "2026-11-01 09:20:11.777 ERROR 1 --- [scheduling-1] c.acme.job.ReportJob                : 日报任务异常"
+    }
+  ],
+  "signals": [
+    {
+      "name": "timeout",
+      "hint": "超时类问题：区分连接超时（网络/端口）与读超时（对端处理慢），两者的排查方向不同。",
+      "in_primary_chain": true,
+      "evidence": [
+        {
+          "log_line": 15,
+          "text": "at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)",
+          "in_primary_chain": true
+        },
+        {
+          "log_line": 20,
+          "text": "Caused by: java.net.SocketTimeoutException: connect timed out",
+          "in_primary_chain": true
+        }
+      ]
+    },
+    {
+      "name": "db_error",
+      "hint": "数据库或连接池问题：区分连接获取失败、SQL 执行失败、死锁、连接泄漏。",
+      "in_primary_chain": true,
+      "evidence": [
+        {
+          "log_line": 5,
+          "text": "org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection; nested exception is java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms",
+          "in_primary_chain": true
+        },
+        {
+          "log_line": 14,
+          "text": "Caused by: java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30000ms",
+          "in_primary_chain": true
+        },
+        {
+          "log_line": 15,
+          "text": "at com.zaxxer.hikari.pool.HikariPool.createTimeoutException(HikariPool.java:696)",
+          "in_primary_chain": true
+        }
+      ]
+    }
+  ],
+  "warnings": [
+    "日志包含 '... N more' 省略帧，堆栈不完整。"
+  ]
+}

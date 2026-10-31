@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.1",
+  "parser": {
+    "name": "parse_java_log.py",
+    "generated_at": "2026-11-01T00:33:11+08:00",
+    "lines_total": 1,
+    "lines_scanned": 1,
+    "scan_offset": 0,
+    "truncated": false,
+    "app_packages": [
+      "com.acme"
+    ]
+  },
+  "summary": {
+    "exception_count": 0,
+    "chain_count": 0,
+    "primary_chain_index": null,
+    "chain_length": 0,
+    "has_caused_by": false,
+    "root_cause_type": null,
+    "root_cause_message": null,
+    "root_cause_log_line": null,
+    "has_business_frame": false,
+    "frame_count": 0,
+    "oom_kind": null,
+    "primary_signals": [],
+    "noise_signals": []
+  },
+  "out_of_memory": {
+    "present": false,
+    "type": null,
+    "kind": null,
+    "log_line": null,
+    "evidence": null
+  },
+  "chains": [],
+  "exceptions": [],
+  "business_frames": [],
+  "first_business_frame": null,
+  "root_business_frame": null,
+  "error_lines": [
+    {
+      "log_line": 1,
+      "level": "ERROR",
+      "text": "2023-10-27 10:00:00 ERROR - something went wrong, please check the database."
+    }
+  ],
+  "signals": [],
+  "warnings": [
+    "未在日志中解析到异常堆栈：可能只有一行错误文本，或日志格式非标准。"
+  ]
+}

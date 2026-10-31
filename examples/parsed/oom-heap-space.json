@@ -1,0 +1,353 @@
+{
+  "schema_version": "1.1",
+  "parser": {
+    "name": "parse_java_log.py",
+    "generated_at": "2026-11-01T00:55:02+08:00",
+    "lines_total": 20,
+    "lines_scanned": 20,
+    "scan_offset": 0,
+    "truncated": false,
+    "app_packages": [
+      "com.acme"
+    ]
+  },
+  "summary": {
+    "exception_count": 3,
+    "chain_count": 2,
+    "primary_chain_index": 1,
+    "chain_length": 2,
+    "has_caused_by": true,
+    "root_cause_type": "java.lang.OutOfMemoryError",
+    "root_cause_message": "Java heap space",
+    "root_cause_log_line": 15,
+    "has_business_frame": true,
+    "frame_count": 12,
+    "oom_kind": "Java heap space",
+    "primary_signals": [
+      "oom"
+    ],
+    "noise_signals": [
+      "timeout"
+    ]
+  },
+  "out_of_memory": {
+    "present": true,
+    "type": "java.lang.OutOfMemoryError",
+    "kind": "Java heap space",
+    "log_line": 15,
+    "evidence": "Caused by: java.lang.OutOfMemoryError: Java heap space"
+  },
+  "chains": [
+    {
+      "index": 0,
+      "start_line": 5,
+      "end_line": 9,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "java.net.SocketTimeoutException",
+          "message": "Read timed out",
+          "log_line": 5,
+          "raw": "java.net.SocketTimeoutException: Read timed out",
+          "frames": [
+            {
+              "raw": "at java.base/sun.nio.ch.NioSocketImpl.timedRead(NioSocketImpl.java:288)",
+              "class": "sun.nio.ch.NioSocketImpl",
+              "method": "timedRead",
+              "file": "NioSocketImpl.java",
+              "line": 288,
+              "log_line": 6,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at java.base/java.net.SocketInputStream.socketRead0(Native Method)",
+              "class": "java.net.SocketInputStream",
+              "method": "socketRead0",
+              "file": null,
+              "line": null,
+              "log_line": 7,
+              "is_business": false,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at com.acme.report.remote.PullCenterClient.fetch(PullCenterClient.java:87)",
+              "class": "com.acme.report.remote.PullCenterClient",
+              "method": "fetch",
+              "file": "PullCenterClient.java",
+              "line": 87,
+              "log_line": 8,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 0
+            },
+            {
+              "raw": "at com.acme.report.web.ReportController.preview(ReportController.java:96)",
+              "class": "com.acme.report.web.ReportController",
+              "method": "preview",
+              "file": "ReportController.java",
+              "line": 96,
+              "log_line": 9,
+              "is_business": true,
+              "chain_index": 0,
+              "depth": 0
+            }
+          ],
+          "frames_truncated": false
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "start_line": 11,
+      "end_line": 20,
+      "nodes": [
+        {
+          "depth": 0,
+          "type": "org.springframework.web.util.NestedServletException",
+          "message": "Handler dispatch failed; nested exception is java.lang.OutOfMemoryError: Java heap space",
+          "log_line": 11,
+          "raw": "org.springframework.web.util.NestedServletException: Handler dispatch failed; nested exception is java.lang.OutOfMemoryError: Java heap space",
+          "frames": [
+            {
+              "raw": "at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1071)",
+              "class": "org.springframework.web.servlet.DispatcherServlet",
+              "method": "doDispatch",
+              "file": "DispatcherServlet.java",
+              "line": 1071,
+              "log_line": 12,
+              "is_business": false,
+              "chain_index": 1,
+              "depth": 0
+            },
+            {
+              "raw": "at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:962)",
+              "class": "org.springframework.web.servlet.DispatcherServlet",
+              "method": "doService",
+              "file": "DispatcherServlet.java",
+              "line": 962,
+              "log_line": 13,
+              "is_business": false,
+              "chain_index": 1,
+              "depth": 0
+            },
+            {
+              "raw": "at com.acme.report.web.ExportController.export(ExportController.java:71)",
+              "class": "com.acme.report.web.ExportController",
+              "method": "export",
+              "file": "ExportController.java",
+              "line": 71,
+              "log_line": 14,
+              "is_business": true,
+              "chain_index": 1,
+              "depth": 0
+            }
+          ],
+          "frames_truncated": false
+        },
+        {
+          "depth": 1,
+          "type": "java.lang.OutOfMemoryError",
+          "message": "Java heap space",
+          "log_line": 15,
+          "raw": "Caused by: java.lang.OutOfMemoryError: Java heap space",
+          "frames": [
+            {
+              "raw": "at java.base/java.util.Arrays.copyOf(Arrays.java:3537)",
+              "class": "java.util.Arrays",
+              "method": "copyOf",
+              "file": "Arrays.java",
+              "line": 3537,
+              "log_line": 16,
+              "is_business": false,
+              "chain_index": 1,
+              "depth": 1
+            },
+            {
+              "raw": "at java.base/java.io.ByteArrayOutputStream.grow(ByteArrayOutputStream.java:120)",
+              "class": "java.io.ByteArrayOutputStream",
+              "method": "grow",
+              "file": "ByteArrayOutputStream.java",
+              "line": 120,
+              "log_line": 17,
+              "is_business": false,
+              "chain_index": 1,
+              "depth": 1
+            },
+            {
+              "raw": "at com.acme.report.exporter.XlsxExporter.writeRow(XlsxExporter.java:214)",
+              "class": "com.acme.report.exporter.XlsxExporter",
+              "method": "writeRow",
+              "file": "XlsxExporter.java",
+              "line": 214,
+              "log_line": 18,
+              "is_business": true,
+              "chain_index": 1,
+              "depth": 1
+            },
+            {
+              "raw": "at com.acme.report.exporter.XlsxExporter.export(XlsxExporter.java:96)",
+              "class": "com.acme.report.exporter.XlsxExporter",
+              "method": "export",
+              "file": "XlsxExporter.java",
+              "line": 96,
+              "log_line": 19,
+              "is_business": true,
+              "chain_index": 1,
+              "depth": 1
+            },
+            {
+              "raw": "at com.acme.report.job.ReportExportJob.run(ReportExportJob.java:58)",
+              "class": "com.acme.report.job.ReportExportJob",
+              "method": "run",
+              "file": "ReportExportJob.java",
+              "line": 58,
+              "log_line": 20,
+              "is_business": true,
+              "chain_index": 1,
+              "depth": 1
+            }
+          ],
+          "frames_truncated": false
+        }
+      ]
+    }
+  ],
+  "exceptions": [
+    {
+      "log_line": 5,
+      "type": "java.net.SocketTimeoutException",
+      "message": "Read timed out",
+      "depth": 0,
+      "is_caused_by": false
+    },
+    {
+      "log_line": 11,
+      "type": "org.springframework.web.util.NestedServletException",
+      "message": "Handler dispatch failed; nested exception is java.lang.OutOfMemoryError: Java heap space",
+      "depth": 0,
+      "is_caused_by": false
+    },
+    {
+      "log_line": 15,
+      "type": "java.lang.OutOfMemoryError",
+      "message": "Java heap space",
+      "depth": 1,
+      "is_caused_by": true
+    }
+  ],
+  "business_frames": [
+    {
+      "raw": "at com.acme.report.web.ExportController.export(ExportController.java:71)",
+      "class": "com.acme.report.web.ExportController",
+      "method": "export",
+      "file": "ExportController.java",
+      "line": 71,
+      "log_line": 14,
+      "is_business": true,
+      "chain_index": 1,
+      "depth": 0
+    },
+    {
+      "raw": "at com.acme.report.exporter.XlsxExporter.writeRow(XlsxExporter.java:214)",
+      "class": "com.acme.report.exporter.XlsxExporter",
+      "method": "writeRow",
+      "file": "XlsxExporter.java",
+      "line": 214,
+      "log_line": 18,
+      "is_business": true,
+      "chain_index": 1,
+      "depth": 1
+    },
+    {
+      "raw": "at com.acme.report.exporter.XlsxExporter.export(XlsxExporter.java:96)",
+      "class": "com.acme.report.exporter.XlsxExporter",
+      "method": "export",
+      "file": "XlsxExporter.java",
+      "line": 96,
+      "log_line": 19,
+      "is_business": true,
+      "chain_index": 1,
+      "depth": 1
+    },
+    {
+      "raw": "at com.acme.report.job.ReportExportJob.run(ReportExportJob.java:58)",
+      "class": "com.acme.report.job.ReportExportJob",
+      "method": "run",
+      "file": "ReportExportJob.java",
+      "line": 58,
+      "log_line": 20,
+      "is_business": true,
+      "chain_index": 1,
+      "depth": 1
+    }
+  ],
+  "first_business_frame": {
+    "raw": "at com.acme.report.web.ExportController.export(ExportController.java:71)",
+    "class": "com.acme.report.web.ExportController",
+    "method": "export",
+    "file": "ExportController.java",
+    "line": 71,
+    "log_line": 14,
+    "is_business": true,
+    "chain_index": 1,
+    "depth": 0
+  },
+  "root_business_frame": {
+    "raw": "at com.acme.report.exporter.XlsxExporter.writeRow(XlsxExporter.java:214)",
+    "class": "com.acme.report.exporter.XlsxExporter",
+    "method": "writeRow",
+    "file": "XlsxExporter.java",
+    "line": 214,
+    "log_line": 18,
+    "is_business": true,
+    "chain_index": 1,
+    "depth": 1
+  },
+  "error_lines": [
+    {
+      "log_line": 4,
+      "level": "ERROR",
+      "text": "2026-11-01 02:08:12.115 ERROR 1 --- [http-nio-8080-exec-4] c.a.r.web.ReportController          : 拉取远程数据源失败 source=pull-center"
+    },
+    {
+      "log_line": 10,
+      "level": "ERROR",
+      "text": "2026-11-01 02:10:44.318 ERROR 1 --- [scheduling-2] c.a.r.job.ReportExportJob           : 报表导出失败 reportId=R20261101-009 rows=480000"
+    }
+  ],
+  "signals": [
+    {
+      "name": "timeout",
+      "hint": "超时类问题：区分连接超时（网络/端口）与读超时（对端处理慢），两者的排查方向不同。",
+      "in_primary_chain": false,
+      "evidence": [
+        {
+          "log_line": 5,
+          "text": "java.net.SocketTimeoutException: Read timed out",
+          "in_primary_chain": false
+        }
+      ]
+    },
+    {
+      "name": "oom",
+      "hint": "内存耗尽：见 java-exceptions.md 的 OOM 章节，先分型再动手。",
+      "in_primary_chain": true,
+      "evidence": [
+        {
+          "log_line": 11,
+          "text": "org.springframework.web.util.NestedServletException: Handler dispatch failed; nested exception is java.lang.OutOfMemoryError: Java heap space",
+          "in_primary_chain": true
+        },
+        {
+          "log_line": 15,
+          "text": "Caused by: java.lang.OutOfMemoryError: Java heap space",
+          "in_primary_chain": true
+        }
+      ]
+    }
+  ],
+  "warnings": []
+}

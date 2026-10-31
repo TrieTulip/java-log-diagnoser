@@ -66,7 +66,7 @@ java.lang.NullPointerException: Cannot invoke "com.acme.order.domain.OrderItem.g
 2026-10-31 21:06:11.229  INFO 1 --- [http-nio-8080-exec-8] c.a.o.c.OrderController : 查询订单详情成功 orderId=SO20261031012
 ```
 
-## 3. Step 1：脚本抽取结果（节选）
+## 3. Step 2：脚本抽取结果（节选）
 
 ```json
 {
@@ -108,66 +108,109 @@ java.lang.NullPointerException: Cannot invoke "com.acme.order.domain.OrderItem.g
 1. 主链最深处是 NPE（L21），不是外层那三个 Spring/Hibernate 包装异常。
 2. 报错点（L9，`OrderController.detail`）与故障点（L22，`OrderAssembler.toDetail`）**不是同一个位置**。
 
-## 4. Step 2：命中的知识
+## 4. Step 3.1：命中的知识
 
 - `signals` 只命中 `npe`，其余信号（连接、超时、类加载、依赖冲突、OOM）均未命中 →
   只需读 `references/java-exceptions.md` 的 **NullPointerException** 一节，不必加载其他章节。
 - `summary.oom_kind` 为 `null`、`out_of_memory.present` 为 `false` → 直接排除内存方向，不做"加大堆内存"的建议。
 - 校验命令从 `references/safe-commands.md` 取，限定在 `grep` / `jps` / `jstack` / `SELECT` 范围。
 
-## 5. Step 3：分析中间产物
+## 5. Step 3.2：分析中间产物
+
+按 `prompts/extract_root_cause.md` 执行，顺序固定：**先取证 → 再假设 → 再反证 → 最后自审**。
+第 4 节的 E 表里没有一句是我的话，全部是从日志逐字复制的原文；每条假设都挂着 E 编号。
 
 ```
 ### 1. 链定位
 chain_index: 0 / chain_length: 4
-root_cause: java.lang.NullPointerException — Cannot invoke "…getSkuId()" because the element at index 1 of "java.util.List" is null (L21, 消息完整)
-discarded_chains: chain 1 — 同一故障的第二次复现，作旁证不单独分析
+root_cause: java.lang.NullPointerException — Cannot invoke "…getSkuId()" because the element at index 1 of "java.util.List" is null [L21] [事实·脚本]
+discarded_chains: chain 1 — 同一故障的第二次复现（L28），作旁证不单独分析
 
 ### 2. 代码位置
-报错点: OrderController.detail(OrderController.java:64) [L9]
-故障点: OrderAssembler.toDetail(OrderAssembler.java:52) [L22]
-说明: 查询接口经事务提交阶段的 OrderAuditListener.beforeCommit(L20) 回调进入组装逻辑，
-      `OrderAssembler.java:41` 重载调用 `:52`，在遍历明细列表时取下标元素失败。
+业务包: com.acme
+报错点: com.acme.order.controller.OrderController.detail(OrderController.java:64) [L9] [事实·脚本]
+故障点: com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52) [L22] [事实·脚本]
+说明: 请求入口在 OrderController；异常在事务提交阶段的 OrderAuditListener 回调中抛出（L20），
+      组装方法 41 行重载调用 52 行（L23），在遍历明细时取下标元素失败。
 
 ### 3. 语义归类
 class: npe
 knowledge_section: references/java-exceptions.md#npe
+signals_used: npe (primary) | noise: 无
 
-### 4. 假设
-H1 | confidence=high | 明细列表中含 null 元素，组装时未过滤即取属性
-- evidence: L21 `element at index 1 of "java.util.List" is null`；L22 `OrderAssembler.java:52`；L28 `index 2 … is null`（另一订单复现）
-- counter_evidence: 无。L33 的成功订单说明不是全量，与"个别订单脏数据"一致，不构成反证
-- verify:
-  1. `SELECT order_id, COUNT(*) FROM t_order_item WHERE order_id IN ('SO20261031001','SO20261031007') GROUP BY order_id;` — 期望观察：0 行或条数不足
-  2. 人工核对 OrderAssembler.java:41-60 是否对元素判空 — 期望观察：无判空，直接 `item.getSkuId()`
-- basis: 知识库 NPE 分类中的"集合元素为 null"分支
+### 4. 证据表（只放原文，不放结论）
+E1 | L9  | > at com.acme.order.controller.OrderController.detail(OrderController.java:64)
+E2 | L20 | > at com.acme.order.listener.OrderAuditListener.beforeCommit(OrderAuditListener.java:38)
+E3 | L21 | > Caused by: java.lang.NullPointerException: Cannot invoke "com.acme.order.domain.OrderItem.getSkuId()" because the element at index 1 of "java.util.List" is null
+E4 | L22 | > at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:52)
+E5 | L23 | > at com.acme.order.assembler.OrderAssembler.toDetail(OrderAssembler.java:41)
+E6 | L28 | > java.lang.NullPointerException: Cannot invoke "com.acme.order.domain.OrderItem.getSkuId()" because the element at index 2 of "java.util.List" is null
+E7 | L33 | > 2026-10-31 21:06:11.229  INFO 1 --- [http-nio-8080-exec-8] c.a.o.c.OrderController : 查询订单详情成功 orderId=SO20261031012
 
-H2 | confidence=medium | 组装代码按下标写预分配列表，缺失项留下空洞
-- evidence: L21 index 1；L28 index 2 —— 下标不连续且非 0
-- counter_evidence: 若列表由 JPA 关联映射直接生成，Hibernate 不会产生 null 元素
+### 5. 假设
+H1 | confidence=high | 明细列表中含 null 元素，组装时未过滤即取 skuId
+- 引用: E3, E4, E6
+- 推理链: E3 是 Helpful NPE，明确指出是**集合里 index 1 的元素**为 null，而不是方法调用者为 null；
+  E4 的帧落在 toDetail:52；E6 在另一笔订单的 index 2 复现同一行 → 52 行在遍历中直接取元素属性，
+  对 null 元素没有防护 [推测]
+- counter_evidence: 无。E7 显示同期其他订单查询成功，只说明不是全量，与"个别订单数据异常"不矛盾
 - verify:
-  1. 查看 OrderQueryService.java:110 附近如何构建 items — 期望观察：`set(` / `new OrderItem[` / `IntStream.range`
-- basis: 经验，仅下标特征支撑
+  1. `SELECT order_id, COUNT(*) FROM t_order_item WHERE order_id IN ('SO20261031001','SO20261031007') GROUP BY order_id;`（表名以实际库表为准）— 期望观察：返回 0 行，或条数少于页面应展示的明细数
+  2. 人工核对 OrderAssembler.java:41-60 是否对元素判空 — 期望观察：无 `Objects.nonNull` / `item != null`，直接 `item.getSkuId()`
+  3. `grep -rn "toDetail" src/main/java/com/acme/order --include=*.java` — 期望观察：确认 :41 与 :52 的重载调用关系
+- basis: 知识库 #npe 的"集合元素为 null"分支
 
-H3 | confidence=low | 详情缓存快照中存了 null 元素
-- evidence: L24 `OrderQueryService.query:110`
-- counter_evidence: 日志无任何 cache/redis 关键字，缺乏支撑
+H2 | confidence=medium | 列表按下标预分配后写入，缺失项留下空洞
+- 引用: E5, E3, E6
+- 推理链: E5 显示同一方法的 41 行重载调用 52 行，说明 52 行在遍历/重载体内；
+  E3 与 E6 的下标分别是 1 和 2，都不是 0 → 位置不连续，符合"先预分配容量、再按下标 set，
+  某次 set 未执行"的特征 [推测]。未闭环部分：日志没有构建该列表的代码，无法确认写入方式
+- counter_evidence: 若列表由 JPA 关联映射直接生成，Hibernate 不会产生 null 元素，本条不成立
 - verify:
-  1. `redis-cli --get <key>` 查看 `order:detail:SO20261031001` 快照 — 期望观察：JSON 数组含 null
+  1. 查看 OrderQueryService.java:110 附近如何构建明细列表 — 期望观察：出现 `set(` / `new OrderItem[` / `IntStream.range` 等按下标写入的写法
+  2. `grep -n "parallelStream\|\.set(" src/main/java/com/acme/order/assembler/OrderAssembler.java` — 期望观察：命中则 H2 可能性上升
+- basis: 通用经验，仅下标特征支撑
+
+H3 | confidence=low | 明细数据在写入侧落了 null 记录（脏数据）
+- 引用: E3, E6
+- 推理链: E3、E6 表明 null 与具体订单绑定，且两笔订单下标不同 → 更可能来自数据本身而非固定代码分支 [推测]。
+  未闭环部分：没有明细数据，无法分辨 null 是"缺行"还是"写了空值"
+- counter_evidence: 无直接反证；若 H2 成立，null 由代码而非数据产生
+- verify:
+  1. 按 H1 的 SQL 核对两笔订单明细条数与页面展示条数是否一致 — 期望观察：条数不足说明"缺行"
+  2. 按 H1 的 SQL 检查是否存在 order_id 为空的明细行 — 期望观察：存在则支持"写了空值"
 - basis: 模式匹配，优先级最低
 
-### 5. 已排除
-- 数据库不可达/连接池耗尽：无 SQLException、HikariPool 信号；L33 同期查询成功
-- 内存问题：out_of_memory.present=false
-- 并发竞争：两次异常在不同线程，堆栈无锁等待帧，同一行稳定复现
+### 6. 已排除
+- 数据库不可达 / 连接池耗尽：E3 的根因是 NPE，全文无 SQLException / HikariPool 命中，E7 同期查询成功 — 依据: E3, E7
+- 内存问题：out_of_memory.present = false，E3 的消息是 NPE 而非 OutOfMemoryError — 依据: E3
+- 并发竞争：两次异常分属 exec-5 / exec-6 线程，E6 在同一源码行稳定复现 — 依据: E6
+- 写路径或定时任务：E1 显示失败发生在 GET 详情接口的两个线程，与 21:05 的同步任务无交集 — 依据: E1
+- 把提交阶段回调当根因：E2 的 beforeCommit 只是异常穿过的位置，该回调本身不产生 NPE — 依据: E2
 
-### 6. 信息缺口
-- `... 27 more`(L25) 截断，看不到 toDetail 的上层调用者
-- 无 OrderAssembler 源码，无法确认是否已有判空
-- 无 t_order_item 数据，无法确认"null 来自数据库还是代码"
+### 7. 信息缺口
+- `... 27 more`（L25）截断，看不到 toDetail 的上层调用者，H1 的"谁传入该列表"无法闭环
+- 无 OrderAssembler 源码，无法确认 52 行是否已有判空（H1 的 verify 2 依赖它）
+- 无明细表数据，H2、H3 只能验证不能确认
+
+### 8. 自我审查
+| # | 自查问题 | 结论 | 处置 |
+| --- | --- | --- | --- |
+| 1 | 每个 L 编号都在原文中存在且内容对应？ | 是 | — |
+| 2 | E 表每段引用都与原文逐字一致？ | 是 | 逐行比对过 33 行日志 |
+| 3 | 每个假设都引用了真实存在的 E 编号？ | 是 | H1→E3/E4/E6，H2→E5/E3/E6，H3→E3/E6 |
+| 4 | 假设里的类名/方法名/配置项都在日志或脚本输出中出现过？ | 是 | 未出现日志之外的业务名词 |
+| 5 | 是否把包装异常当成了根因？ | 否 | 三个 Spring/Hibernate 包装异常只作链路节点 |
+| 6 | 无业务帧时是否仍指出了具体代码行？ | 否 | 业务帧已识别，根包 com.acme |
+| 7 | 每条假设都有反证与可执行的验证步骤？ | 是 | 反证栏均有内容，verify 均可执行 |
+| 8 | 是否出现"可能/大概/建议重启"这类无证据表述？ | 否 | — |
+SELF_CHECK: PASS_WITH_GAPS
 ```
 
-## 6. Step 4：最终报告
+`PASS_WITH_GAPS` 而不是 `PASS`：结论本身没有幻觉，但 `... 27 more`、无源码、无数据这三个缺口
+让 H2/H3 无法闭环，必须留给第 6 节（最终报告）如实交代。
+
+## 6. Step 4.1：最终报告
 
 完整成品见 [`reports/npe-in-commit-chain.report.md`](reports/npe-in-commit-chain.report.md)，
 包含七节：结论摘要 / 关键证据表 / 三个假设（含反证与验证步骤）/ 止血与根治建议 /

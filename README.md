@@ -53,7 +53,7 @@ java-log-diagnoser/
 ### 方式一：一键安装到编码工具（推荐）
 
 ```bash
-npx skills add <your-github-name>/java-log-diagnoser
+npx skills add TrieTulip/java-log-diagnoser
 ```
 
 按提示选择目标工具（Claude Code / Cursor / Copilot 等）与作用域（项目级或用户级）。

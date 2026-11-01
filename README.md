@@ -25,7 +25,7 @@
 | 拿日志里无关错误的特征当根因 | 每条信号带 `in_primary_chain`，只有落在主链的才能支撑结论 |
 | 结论与证据对不上号 | Step 3 强制"证据表 → 假设"闭环：每条结论挂 E 编号，E 编号背后是逐字原文 |
 | 报告里的类名/行号是编的，但读起来毫无破绽 | `scripts/validate_diagnosis.py` 逐条回日志比对，对不上**退出码 1**——不是"提醒"，是拦截 |
-| 日志信息不足，却硬凑三个"低置信度假设" | R3 红线：第一行必须是【信息不足，拒绝盲目诊断】+ 3 个具体补充问题，`validate_skill.py` 会检查降级模板 |
+| 日志信息不足，却硬凑三个"低置信度假设" | R3 红线：第一行必须是【信息不足，拒绝盲目诊断】+ 3 个具体问题，`validate_skill.py` 会检查降级模板 |
 | 写报告的人不肯挑自己的错 | Step 5（可选）切换到审查员身份：只判定、只定位、不重写，按 R1–R6 打回 |
 | "肯定是""根本原因就是"这类断言 | R2 黑名单 + CI 扫描；`[推测]` 段落里出现强断言直接打回 |
 | 建议 `kill -9` / 重启 | `references/safe-commands.md` 是白名单；CI 会扫描命令表与代码块，出现即失败 |
@@ -71,7 +71,7 @@ java-log-diagnoser/
 ### 方式一：一键安装到编码工具（推荐）
 
 ```bash
-npx skills add <your-github-name>/java-log-diagnoser
+npx skills add TrieTulip/java-log-diagnoser
 ```
 
 按提示选择目标工具（Claude Code / Cursor / Copilot 等）与作用域（项目级或用户级）。
